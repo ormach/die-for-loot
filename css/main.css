@@ -185,11 +185,20 @@ h2{
     .card-data{
         /* background-color: white; */
         display: flex;
+        flex-direction: column;
+
+        gap: 4px;
+
         justify-content: center;
         padding: 2px;
         color: rgb(0, 0, 0);
 
         /* outline: 2px solid black; */
+
+        p{
+            font-size: 12px;
+            line-height: 18px;
+        }
     }
     .card-data img{
         position: absolute;

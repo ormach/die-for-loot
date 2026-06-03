@@ -65,14 +65,11 @@
             //Storge per game section, place in LS and build board state from this obj.
             this.cards = [] //Stores all card objects
             this.cardsRef = []
-            this.collection = new Collection
-            this.totalReward = config.rewardsValue
         }
 
 
         //Regen html based on game state
-        updateUI(){
-        }
+        updateUI(){}
 
         //Creates card elements
         genCard(args){
@@ -98,7 +95,6 @@
 
 
                 this.cardId = args.cardObj.cardId
-                this.rarity = args.cardObj.rarity
                 this.location = args.cardObj.location  
             }
 
@@ -123,21 +119,13 @@
                 //Set props
                 this.cardId = genId('cr')
                 this.location = args.location //stores id of location elem
-    
-                //Pick card rarity
-                let roll = rng(1000)
-                if      (roll > 995){this.rarity = 'set'}
-                else if (roll > 980){this.rarity = 'legendary'}
-                else if (roll > 900){this.rarity = 'epic'}
-                else if (roll > 700){this.rarity = 'rare'}
-                else               {this.rarity = 'common'}
+
             }
 
             this.name = this.cardRefObj.name
-            this.description_1 = this.cardRefObj.description_1
-            this.description_2 = this.cardRefObj.description_2
-            this.tags = this.cardRefObj.tags
-            this.source = this.cardRefObj.source  
+            this.effect = this.cardRefObj.effect
+            this.type = this.cardRefObj.type
+            this.cost = this.cardRefObj.cost
                      
             g.cards.push(this)        
             
@@ -174,8 +162,9 @@
 
             card.innerHTML = `
                     <div class="card-data">
-                        <img draggable="false" src="./img/rarity/${this.rarity}.svg"/>
                         <h2>${upp(this.name)}</h2>
+                        <p>${this.effect}</p>
+                        <p>${this.cost}</p>
                     </div>
             `
 
@@ -216,18 +205,6 @@
     }
 
 
-//COLLECTION
-    class Collection{
-        constructor(){
-            this.width = config.albumColumns
-            this.height = config.albumRows
-
-            //Update id to default page
-
-        }
-    }
-
-
 //START GAME
     let g //global game variable
     let cardsRef //required due to fetch
@@ -235,40 +212,27 @@
     function startGame(){
         g = new Game
         
-        //Remove draft cards from the pool & add cards to game obj
+        //Add cards to game obj
         cardsRef.forEach(card =>{
-            if(card.export === "y"){
                 g.cardsRef.push(card)
-            }
         })
 
-        cardsRef = g.cardsRef
-        
+        cardsRef = g.cardsRef     
+        console.log(cardsRef);
+           
+
         //Load/generate game
         g.updateUI()
-        
     }
 
-    function allCards(){
-        g.cardsRef.forEach(card => {
-            g.genCard(
-                {
-                    "number": 1,
-                    "location": "hand",
-                    "name": card.name
-                }
-            )
-        })
-    }
-
-    function genCard(){
-       g.genCard(
-                {
-                    "number": 1,
-                    "location": "1",
-                    "name": "acceleration"
-                }
-            ) 
+    function genCard(name){
+       g.genCard({
+            "number": 1,
+            "location": "1",
+            "name": name,
+            "effect": "effect",
+            "cost": "cost"
+        }) 
     }
     
 //Fetch csv file, parse to JSON, assing it to reg obj
