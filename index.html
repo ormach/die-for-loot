@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Subpar Scribe</title>
+
+        <!-- Share link preview -->
+        <meta property="og:title" content="Library Of Morr" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.gatesofmorr.com" />
+        <meta property="og:image:url" content="https://www.gatesofmorr.com/img/share-image.png" />
+        <meta property="og:image:type" content="image/png" >
+        <meta property="og:image:width" content="1200" >
+        <meta property="og:image:height" content="1200" >
+
+        <!-- Descriptions -->
+        <meta property="og:description" content="A free web rougelike with unique dice based combat system, many interesting items and map events." />
+        <meta name="description" content="A free web rougelike with unique dice based combat system, many interesting items and map events.">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <!-- Mono -->
+        <!-- <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet"> -->
+
+        <!-- Grenze -->
+        <link href="https://fonts.googleapis.com/css2?family=Grenze:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+        <!-- Inter -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+        <!-- Favicon -->
+        <link rel="apple-touch-icon"      sizes="180x180"    href="./favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32"      href="./favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16"      href="./favicon/favicon-16x16.png">
+    <!--    <link rel="manifest"                                 href="favicon/manifest.json">-->
+        <link rel="mask-icon"                                href="./favicon/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+    </head>
+
+    <body>
+
+        <div class="wrapper">
+
+            <div class="leftSection" style="display: flex; gap: 52px; flex-direction: column;">
+
+                <button id="deck" onclick="genCard()">Next turn</button>
+        
+                <div id="dice" style="display: flex; gap: 12px;">
+                    <button class="die">1</button>
+                    <button class="die">3</button>
+                </div>
+            </div>
+    
+            <!-- Collection -->
+                                    
+
+            <!-- Cards -->
+            <div id="scene" class="">
+                <div id="1" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+                </div>
+                <div id="2" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div id="3" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div id="4" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div id="5" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div id="6" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+
+                
+
+            <div class="rightSection" style="display: flex; gap: 52px; flex-direction: column;">
+
+                <button id="collection">Collection (12/30)</button>
+                <button id="void">Void container (12)</button>
+            </div>
+
+        </div>
+
+        
+    <!-- ALERT -->
+        <div id="alert" class="hide" onclick="this.classList.add('hide')">
+            <p id="alert-note">Message.</p>
+            <img src="./img/ico/item-x.svg" alt="">
+        </div>
+
+    </body>
+
+</html>
+
+<!--JS files-->
+<script src="js/utility.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
