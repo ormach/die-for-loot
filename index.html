@@ -54,22 +54,20 @@
 
             <div class="leftSection" style="display: flex; gap: 52px; flex-direction: column;">
 
-                <button id="deck" onclick="genCard()">Next turn</button>
+                <button id="" onclick="g.startTurn()">Next turn</button>
+
+                <p id="pile"></p>
         
-                <div id="dice" style="display: flex; gap: 12px;">
-                    <button class="die">1</button>
-                    <button class="die">3</button>
-                </div>
+                <div id="dice"></div>
             </div>
     
             <!-- Collection -->
-                                    
+                             
+            
 
             <!-- Cards -->
-            <div id="scene" class="">
-                <div id="1" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)">
-
-                </div>
+            <div id="table" class="">
+                <div id="1" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 <div id="2" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 <div id="3" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 <div id="4" class="card-container" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -80,9 +78,22 @@
                 
 
             <div class="rightSection" style="display: flex; gap: 52px; flex-direction: column;">
+                <button id="voidBtn" onclick="toggleModal(`void`)"></button>
+                <button id="bagBtn" onclick="toggleModal(`bag`)"></button>
+            </div>
 
-                <button id="collection">Collection (12/30)</button>
-                <button id="void">Void container (12)</button>
+            <div id="void" class="modal hide">
+                <div class="modalHeader">
+                    <h1>Void</h1>
+                    <button onclick="toggleModal(`void`)">Hide</button>
+                </div>
+            </div>
+
+            <div id="bag" class="modal hide">
+                <div class="modalHeader">
+                    <h1>Bag</h1>
+                    <button onclick="toggleModal(`bag`)">Hide</button>
+                </div>
             </div>
 
         </div>

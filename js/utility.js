@@ -14,7 +14,7 @@ function clearClassOfAll(classId){//Removes class from all html elems
 
 function toggleModal(id){//modal
     document.getElementById(id).classList.toggle('hide')
-    this.runAnim(el(id).firstElementChild, 'modal-slide')
+    // this.runAnim(el(id).firstElementChild, 'modal-slide')
 }
 
 function rng(maxValue, minValue){//Random number

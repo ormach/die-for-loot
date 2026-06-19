@@ -7,22 +7,22 @@
     function allowDrop(ev) {
         ev.preventDefault();
     }
-    //Drag card
+
+    //MOVE card
     function drag(ev) {
         //Record dragged card
         draggedCard = ev.target //logs picked card
+        // console.log(ev.target.classList[0], ev.target.id, ev.target.dataset.rollvalue);
+        
 
-        //Records dragged card (records id)
-        // ev.dataTransfer.setData("text/plain", ev.target.id);
-
-        //Make all cards not interactable?
+        //Records dragged element data to pass to drop(ev)
+        ev.dataTransfer.setData("text/plain", ev.target.id);
     }
-    //Drop card
+
+    //DROP card
     function drop(ev) {
         ev.preventDefault();
-
-        //Get data from drag() function (transefrs id)
-        // var data = ev.dataTransfer.getData("text/plain");
+        
 
         //Record target elem
         //If target elem is card, change target to cards container
@@ -50,8 +50,31 @@
 
         //Do stuff on card placement
         //Update card location
-        findByProperty(g.cards, 'cardId', draggedCard.id).location = targetContainer.id
+
+        //Target element id
+        let targetCard = ev.target.closest(".card")        
+        // findByProperty(g.cards, 'cardId', draggedCard.id).location = targetContainer.id
         
+
+        //EVALUATE costs
+
+        //Get data from drag() function (transfers id)
+        var data = ev.dataTransfer.getData("text/plain");
+        let activeDie = el(data)
+
+        console.log(`
+            Roll value: ${activeDie.dataset.rollvalue} 
+            / 
+            Target element:( ${targetCard.id} | ${ev.target.dataset.cost} )
+        `);
+        
+
+        if(activeDie.dataset.rollvalue == targetCard.dataset.cost){
+            console.log('Cost paid');
+            targetCard.remove()
+            activeDie.remove()
+        }
+
         // console.log(
         //     findByProperty(g.cards, 'cardId', draggedCard.id)
         // );   
@@ -62,20 +85,98 @@
 //GAME & UI
     class Game {
         constructor(){
-            //Storge per game section, place in LS and build board state from this obj.
             this.cards = [] //Stores all card objects
             this.cardsRef = []
+            this.dice = []
+            this.void = []
+            this.bag = []
+            this.pile = []
         }
 
 
         //Regen html based on game state
-        updateUI(){}
+        updateUI(){
+            el(`voidBtn`).innerHTML = `
+                Void (${this.void.length})
+            `
+
+            el(`bagBtn`).innerHTML = `
+                Bag (${this.bag.length}/30)
+            `
+
+            el(`pile`).innerHTML = `
+                Pile (${this.pile.length})
+            `
+        }
 
         //Creates card elements
         genCard(args){
-            for(let i = 0; i < args.number; i++){
+            let cardQuantity
+
+            if(args == undefined){
+                cardQuantity = 1
+            } else{
+                cardQuantity = args.number
+            }
+
+            for(let i = 0; i < cardQuantity; i++){
                 new Card(args)           
             }
+        }
+
+        //Turn
+        startTurn(){
+            //Place 4 items on the table
+            this.genCard({"number": 4})
+
+            //Get 2 dice
+            this.clearDice()
+            new Die
+            new Die
+
+            console.log("Turn started");
+
+            this.updateUI()
+        }
+
+        //Clear dice
+        clearDice(){
+            g.dice = []
+            el("dice").innerHTML = ``
+ 
+            // console.log("Dice cleared.");           
+        }
+    }
+
+//DIE
+    class Die {
+        constructor(){
+            this.value = rng(6,1)
+            this.dieId = genId('di')
+            g.dice.push(this)
+            
+            this.genDieHtml()
+
+            // console.log(g.dice);
+        }
+
+        //Adds die html element to #dice
+        genDieHtml(){
+            let die = document.createElement('div')
+            
+            die.id = this.dieId
+            die.classList = 'die'
+            die.setAttribute('draggable','true')
+            die.setAttribute('ondragstart','drag(event)')
+
+            die.setAttribute('data-rollvalue', this.value)
+            
+            // Image
+            die.setAttribute('style',`background-image: url("./img/die/id=${this.value}.png")`) 
+            
+            el('dice').append(die)
+
+            // console.log(die);          
         }
     }
 
@@ -84,60 +185,45 @@
     class Card {
         //constructor(cardRef, location, mode)
         constructor(args){
-            // console.log(args);            
+            // console.log(args);   
+            
+            if(args.name == undefined){
+                args = {
+                    "name": rarr(cardsRef).name,
+                    "effect": "effect",
+                    "cost": "cost",
+                    "location": "table",
+                } 
+            }
+
             let newCardName = args.name
 
-            //Recreates existing card
-            if(args.mode === 'regen'){            
-                // this.cardRefObj = args.cardObj
-                // console.log(this.cardRefObj);
-                this.cardRefObj = findByProperty(cardsRef, 'name', args.cardObj.name)            
+            //Find card reference in ref object
+            this.cardRefObj = findByProperty(cardsRef, 'name', newCardName)            
+            // console.log(this.cardRefObj);
+            
 
+            //Set props
+            this.cardId = genId('cr')
+            this.location = args.location //stores id of location elem
 
-                this.cardId = args.cardObj.cardId
-                this.location = args.cardObj.location  
-            }
-
-            //Creates new random card
-            else{
-                //Choose random card if no name provided
-                if(args.name == undefined){
-                    if(args.setName == undefined){
-                        args.name = rarr(cardsRef).name
-                    }
-                    else {
-                       let set = cardsRef.filter((card) => card.set === args.setName);
-                    //    console.log(cardsRef, args.setName);
-                        newCardName = rarr(set).name                       
-                    }
-                }
-
-                //Find card reference in ref object
-                this.cardRefObj = findByProperty(cardsRef, 'name', newCardName)            
-                // console.log(this.cardRefObj);
-                
-                //Set props
-                this.cardId = genId('cr')
-                this.location = args.location //stores id of location elem
-
-            }
-
-            this.name = this.cardRefObj.name
+            
+            this.name   = this.cardRefObj.name
             this.effect = this.cardRefObj.effect
-            this.type = this.cardRefObj.type
-            this.cost = this.cardRefObj.cost
+            this.type   = this.cardRefObj.type
+            this.cost   = this.cardRefObj.cost
                      
+
             g.cards.push(this)        
             
+
             //Generate html elem
             let card = this.genHtml()
             
+
             //Append html element to location  
             // console.log(el(location));
-            if(el(args.location) !== null){
-                this.moveCard(card, args.location)
-            }    
-            
+            this.moveCard(card, args.location)  
         }
 
         //Returns card html element
@@ -150,6 +236,7 @@
             card.classList = 'card'
             card.setAttribute('draggable','true')
             card.setAttribute('ondragstart','drag(event)')
+            card.setAttribute('data-cost', this.cost)
             
             // console.log(this.cardRefObj);          
             
@@ -164,23 +251,23 @@
                     <div class="card-data">
                         <h2>${upp(this.name)}</h2>
                         <p>${this.effect}</p>
-                        <p>${this.cost}</p>
+                        <p>Cost: ${this.cost}</p>
                     </div>
             `
 
             //On right click event
-            card.addEventListener("contextmenu", (event) => {
-                if(config.rClickEvent == true){
-                    if(this.location === "hand" || this.location.includes('page')){
-                        this.location = "contract-content_slot-0"
-                    } else {
-                        this.location = "hand"
-                    }
-                    event.preventDefault();
-                    this.moveCard(card, this.location)
-                    g.saveGame()
-                }
-            });
+            // card.addEventListener("contextmenu", (event) => {
+            //     if(config.rClickEvent == true){
+            //         if(this.location === "hand" || this.location.includes('page')){
+            //             this.location = "contract-content_slot-0"
+            //         } else {
+            //             this.location = "hand"
+            //         }
+            //         event.preventDefault();
+            //         this.moveCard(card, this.location)
+            //         g.saveGame()
+            //     }
+            // });
 
             return card
         }
@@ -188,19 +275,48 @@
         moveCard(cardHtmlElem, locationId){
 
             this.location = locationId
-            // console.log(cardHtmlElem);
 
-            //If you add to hand, add to the start of the row
-            // console.log(locationId);
-            if(locationId === 'hand'){
-                el(locationId).insertBefore(cardHtmlElem, el(locationId).firstChild)
+            //Find empty table slot or void              
+            if(locationId == "table"){
+
+                //If 6+ slot with card, then void
+                for(let i = 1; i < 6; i++){
+
+                    if(el(`${i}`).childNodes.length == 0){
+                        locationId = `${i}`
+                    }
+
+                    // console.log(locationId);
+                    
+                }
+
+                //Loop from slot 1.
+                let i = 1;
+                let placed = false
+
+                while (placed == false) {
+
+                    if(i == 7){
+                        locationId = "void"
+                        // console.log("Card voided."); 
+                        placed = true
+                        i = 6
+                    }
+
+                    if(el(`${i}`).childNodes.length == 0){
+                        locationId = `${i}`
+                        placed = true
+                    }
+
+                    i++;
+
+                }
             }
 
-            //Else add to slot
-            else{                
-                el(locationId).append(cardHtmlElem)
-            }     
+            
+            el(locationId).append(cardHtmlElem)
 
+            // console.log(cardHtmlElem);
         }
     }
 
@@ -215,6 +331,7 @@
         //Add cards to game obj
         cardsRef.forEach(card =>{
                 g.cardsRef.push(card)
+                g.pile.push(card)
         })
 
         cardsRef = g.cardsRef     
@@ -223,18 +340,11 @@
 
         //Load/generate game
         g.updateUI()
-    }
-
-    function genCard(name){
-       g.genCard({
-            "number": 1,
-            "location": "1",
-            "name": name,
-            "effect": "effect",
-            "cost": "cost"
-        }) 
+        g.startTurn()
     }
     
+
+
 //Fetch csv file, parse to JSON, assing it to reg obj
     fetch('./Library game cards [2024] - Sheet1.csv')
         .then(response => response.text())
