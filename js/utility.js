@@ -44,10 +44,6 @@ function shuffle(array) {//Suffle arr
     return array;
 }
 
-function findObj(data, prop, val){ //Don't remember what this did / Data is obj.
-    return data.find(x => x[prop] === val) 
-}
-
 function removeFromArr(data, elem){ //Removes elem from array
         let index = data.indexOf(elem);
             if (index > -1) { // only splice array when item is found
@@ -79,8 +75,12 @@ function removeDuplicatesArr(arr){
     return [...new Set(arr)];
 }
 
-function objContainsByPropValue(object, propery, value){// See if obj contains element with a particular value of a particular property.
-    return Object.values(object).some(obj => obj[propery] === value)
+function findObj(data, prop, val){ //Returns one obj with matching property value from data
+    return data.find(x => x[prop] === val) 
+}
+
+function objContainsByPropValue(object, property, value){// See if obj contains obj with a particular value of a property. Frue/False
+    return Object.values(object).some(obj => obj[property] === value)
 }
 
 function upp(string){//Sets 1st letter to uppercase
@@ -102,6 +102,7 @@ function findByProperty(dataArr, propertyName, propertyValue, mode){
             (item) => item[propertyName].includes(propertyValue)
         )
     }
+    
     //Returns one item
     else{
         dataArr.forEach(item => {
@@ -175,7 +176,8 @@ function genId(prefix){
 //var csv is the CSV file with headers
 function csvJSON(csv){
 
-    var lines=csv.split("\n");
+    // var lines=csv.split("\n");
+    var lines = csv.trim().split(/\r?\n/);
 
     var result = [];
 
@@ -186,8 +188,8 @@ function csvJSON(csv){
     // (you might convert them to &&& or something, then covert them back later)
     var headers=lines[0].split(",");
 
-    //i=2 to skip two 1st rows
-    for(var i=2;i<lines.length;i++){
+    //i represents how many top rows to skip
+    for(var i=1; i<lines.length; i++){
 
         var obj = {};
         var currentline=lines[i].split(",");

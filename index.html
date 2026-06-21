@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Subpar Scribe</title>
+        <title>Die For Loot</title>
 
         <!-- Share link preview -->
         <meta property="og:title" content="Library Of Morr" />
@@ -52,17 +52,20 @@
 
         <div class="wrapper">
 
-            <div class="leftSection" style="display: flex; gap: 52px; flex-direction: column;">
 
-                <button id="" onclick="g.startTurn()">Next turn</button>
+            <!-- Pile Dice -->
+            <div class="leftSection">
 
-                <p id="pile"></p>
-        
+                <button id="turnBtn" onclick="g.nextTurn()">
+                    Next turn 
+                    <span style="opacity: 0.5;">(space)</span>
+                </button>
+
+                <p id="pileBtn"></p>
+                
+                <div id="pile" class="hide"></div>        
                 <div id="dice"></div>
-            </div>
-    
-            <!-- Collection -->
-                             
+            </div>                             
             
 
             <!-- Cards -->
@@ -76,12 +79,13 @@
             </div>
 
                 
-
-            <div class="rightSection" style="display: flex; gap: 52px; flex-direction: column;">
+            <!-- Right buttons -->
+            <div class="rightSection">
                 <button id="voidBtn" onclick="toggleModal(`void`)"></button>
                 <button id="bagBtn" onclick="toggleModal(`bag`)"></button>
             </div>
 
+            <!-- Void -->
             <div id="void" class="modal hide">
                 <div class="modalHeader">
                     <h1>Void</h1>
@@ -89,12 +93,26 @@
                 </div>
             </div>
 
-            <div id="bag" class="modal hide">
+            <!-- Bag -->
+            <div id="bag" class="modal hide"> 
                 <div class="modalHeader">
                     <h1>Bag</h1>
                     <button onclick="toggleModal(`bag`)">Hide</button>
                 </div>
             </div>
+
+            <div id="gameOver" class="modal hide
+            "></div>
+
+            <img id="imgBg"   style="top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
+            <img id="imgPile" style="top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
+            <img id="imgGirl" style="top: -40px; left: -10px;" class="decoration" src="./img/ui-placeholders/girl.png" alt="">
+        
+            <img id="imgTable" style="top: 0px;" class="decoration" src="./img/ui-placeholders/table.png" alt="">
+            <img id="imgVoid" style="bottom: 0px; right: -20px;" class="decoration" src="./img/ui-placeholders/void.png" alt="">
+            <img id="imgBag" style="bottom: -40px; right: 0px;" class="decoration" src="./img/ui-placeholders/bag.png" alt="">
+            <img id="imgGob" style="bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/goblin.png" alt="">
+
 
         </div>
 

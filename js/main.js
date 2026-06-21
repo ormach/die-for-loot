@@ -1,6 +1,6 @@
 //Drag and drop 
 //Requires any ID for draggable elem
-    let draggedCard
+    let draggedElement
     let overlappingCard
     let targetContainer
 
@@ -10,13 +10,13 @@
 
     //MOVE card
     function drag(ev) {
-        //Record dragged card
-        draggedCard = ev.target //logs picked card
-        // console.log(ev.target.classList[0], ev.target.id, ev.target.dataset.rollvalue);
-        
+        //Record dragged element
+        draggedElement = ev.target //logs picked card
 
         //Records dragged element data to pass to drop(ev)
         ev.dataTransfer.setData("text/plain", ev.target.id);
+
+        // console.log(ev.target.classList[0], ev.target.id, ev.target.dataset.rollvalue);
     }
 
     //DROP card
@@ -25,6 +25,7 @@
         
 
         //Record target elem
+        //Prevents card to be added inside of a card.
         //If target elem is card, change target to cards container
         if(ev.target.classList.contains('card')){
             overlappingCard = ev.target
@@ -45,89 +46,115 @@
             targetContainer = ev.target
         }
         
+
         //Add card to container
-        targetContainer.appendChild(draggedCard);
+        targetContainer.appendChild(draggedElement);
+
 
         //Do stuff on card placement
         //Update card location
 
         //Target element id
-        let targetCard = ev.target.closest(".card")        
-        // findByProperty(g.cards, 'cardId', draggedCard.id).location = targetContainer.id
-        
+        let targetCard = ev.target.closest(".card")                
 
         //EVALUATE costs
-
-        //Get data from drag() function (transfers id)
+        //Gets data from drag(), (transfers id)
         var data = ev.dataTransfer.getData("text/plain");
         let activeDie = el(data)
 
-        console.log(`
-            Roll value: ${activeDie.dataset.rollvalue} 
-            / 
-            Target element:( ${targetCard.id} | ${ev.target.dataset.cost} )
-        `);
+        // console.log(`
+        //     Roll value: ${activeDie.dataset.rollvalue}  
+        //     Target element:( ${targetCard.id} | ${ev.target.dataset.cost} )
+        // `);
         
-
+        //Compare dice cost
         if(activeDie.dataset.rollvalue == targetCard.dataset.cost){
             console.log('Cost paid');
-            targetCard.remove()
+
+            //Replace with move
+            //Find card object by id
+            // console.log(targetCard.id);
+            
+            let cardObj = findByProperty(g.table, "cardId", targetCard.id)
+            
+            // cardObj.moveCard(targetCard, `bag`)
             activeDie.remove()
+
+            //Move card to bag
+            cardObj.moveCard("bag")
+        }else{
+            el("dice").appendChild(draggedElement)
         }
 
-        // console.log(
-        //     findByProperty(g.cards, 'cardId', draggedCard.id)
-        // );   
     }
     
+
+
 
 
 //GAME & UI
     class Game {
         constructor(){
-            this.cards = [] //Stores all card objects
-            this.cardsRef = []
-            this.dice = []
-            this.void = []
-            this.bag = []
-            this.pile = []
+            this.cardsRef = [] //Stores initial card data from csv
+            this.cards    = [] //Stores generated cards with html and extra props
+            this.dice     = []
+
+            this.pile     = []
+            this.table    = []
+            this.void     = []
+            this.bag      = []
+
+            this.turnCounter = 0
         }
 
 
         //Regen html based on game state
         updateUI(){
             el(`voidBtn`).innerHTML = `
-                Void (${this.void.length})
+                Void (${g.void.length})
             `
 
             el(`bagBtn`).innerHTML = `
-                Bag (${this.bag.length}/30)
+                Bag (${g.bag.length}/30)
             `
 
-            el(`pile`).innerHTML = `
-                Pile (${this.pile.length})
+            el(`pileBtn`).innerHTML = `
+                Pile (${g.pile.length})
             `
-        }
-
-        //Creates card elements
-        genCard(args){
-            let cardQuantity
-
-            if(args == undefined){
-                cardQuantity = 1
-            } else{
-                cardQuantity = args.number
-            }
-
-            for(let i = 0; i < cardQuantity; i++){
-                new Card(args)           
-            }
         }
 
         //Turn
-        startTurn(){
-            //Place 4 items on the table
-            this.genCard({"number": 4})
+        nextTurn(){
+    
+            //Move 4 items from pile to the table            
+            if(this.pile.length > 3){
+                for(let i = 0; i < 4; i++){
+                    rarr(this.pile).moveCard("table")
+                }
+            }
+            //Moves remaining cards
+            else if(this.pile.length > 0 ){
+                let remainingCards = this.pile.length
+
+                for(let i = 0; i < remainingCards; i++){                    
+                    rarr(this.pile).moveCard("table")
+                }
+            } 
+            else{
+                this.gameOver()
+            }
+
+            if(this.pile.length === 0){
+                
+                el('turnBtn').innerHTML = `
+                    End game 
+                    <span style="opacity: 0.5;">(space)</span>
+                `
+
+                el('turnBtn').classList.add("endRunBtn")
+            }
+            
+            this.turnCounter++
 
             //Get 2 dice
             this.clearDice()
@@ -146,7 +173,58 @@
  
             // console.log("Dice cleared.");           
         }
+
+        gameOver(){
+            if(this.pile.length < 1){
+                console.log("Game over");
+
+                //Calc score
+    
+                let runOutcome 
+
+                if(g.bag.length > 34){
+                    runOutcome = "Diamond"
+                }
+                else if (g.bag.length > 29){
+                    runOutcome = "Golden"
+                }
+                else if (g.bag.length > 25){
+                    runOutcome = "Silver"
+                }
+                else{
+                    runOutcome = "Failed"
+                }
+
+                el('gameOver').innerHTML = `
+                    <h1 id="endTitle">
+                        Game over.<br>
+                        You had a <span style="color:white;">${runOutcome}</span> run.
+                    </h1>
+
+                    <p id="score">
+                        Items in bag: ${g.bag.length} <br>
+                        Turns: ${g.turnCounter}<br><br>
+
+                        Diamond run: 35<br>
+                        Golden run: 30<br>
+                        Silver run: 25<br>
+                    </p>
+
+                    <button onclick="location.reload()">Play again</button>
+                `
+
+                // later
+
+                document.removeEventListener('keydown', keyHandler);
+                document.addEventListener('keydown', newKeyHandler);
+
+                toggleModal("gameOver")
+
+                return true
+            }            
+        }
     }
+
 
 //DIE
     class Die {
@@ -171,59 +249,61 @@
 
             die.setAttribute('data-rollvalue', this.value)
             
-            // Image
-            die.setAttribute('style',`background-image: url("./img/die/id=${this.value}.png")`) 
+            // Image & position
+            die.setAttribute('style',`
+                background-image: url("./img/die/id=${this.value}.svg");
+                top: ${el("dice").childNodes.length * 100}px
+            `) 
             
             el('dice').append(die)
+            this.htmlElem = die
+
+            this.spinAnim()
 
             // console.log(die);          
+        }
+
+        spinAnim(){
+            
+            this.htmlElem.classList.remove("spin");
+
+            // force reflow so browser "resets" animation
+            void el.offsetWidth;
+
+            this.htmlElem.classList.add("spin");
+            
         }
     }
 
 
 //CARD
     class Card {
-        //constructor(cardRef, location, mode)
         constructor(args){
-            // console.log(args);   
             
-            if(args.name == undefined){
-                args = {
-                    "name": rarr(cardsRef).name,
-                    "effect": "effect",
-                    "cost": "cost",
-                    "location": "table",
-                } 
-            }
-
+            // console.log(args);
             let newCardName = args.name
 
             //Find card reference in ref object
-            this.cardRefObj = findByProperty(cardsRef, 'name', newCardName)            
-            // console.log(this.cardRefObj);
-            
+            this.cardRefObj = findByProperty(g.cardsRef, 'name', newCardName)                                    
 
             //Set props
             this.cardId = genId('cr')
             this.location = args.location //stores id of location elem
-
-            
+          
             this.name   = this.cardRefObj.name
             this.effect = this.cardRefObj.effect
             this.type   = this.cardRefObj.type
             this.cost   = this.cardRefObj.cost
-                     
-
-            g.cards.push(this)        
+                    
+            //Check if no cards
+            // if (g.gameOver()) return   
+            // g.cards.push(this)    
             
-
             //Generate html elem
-            let card = this.genHtml()
+            this.genHtml()
             
-
             //Append html element to location  
-            // console.log(el(location));
-            this.moveCard(card, args.location)  
+            this.moveCard(args.location)  
         }
 
         //Returns card html element
@@ -243,16 +323,20 @@
             if(this.cardRefObj.img === "y"){   
                 card.setAttribute('style',`background-image: url("./img/card/id=${cardImg}.png")`) 
             }
-            else {            
-                card.setAttribute('style',`background-image: url("./img/card/id=template.png")`) 
-            }
+
 
             card.innerHTML = `
-                    <div class="card-data">
-                        <h2>${upp(this.name)}</h2>
-                        <p>${this.effect}</p>
-                        <p>Cost: ${this.cost}</p>
+                    <img class="itemImg" src="./img/items/id=${this.name}.png">
+
+                    <div class="props">
+                        <p>${upp(this.type)}</p>
+                        <img class="cost" src="./img/die/id=${this.cost}.png"></img>
                     </div>
+
+                    <div class="card-data">
+                        <p>${this.effect}</p>
+                    </div>
+
             `
 
             //On right click event
@@ -269,12 +353,20 @@
             //     }
             // });
 
+            //Store html elem in obj
+            this.htmlElem = card
             return card
         }
 
-        moveCard(cardHtmlElem, locationId){
+        moveCard(locationId){
 
-            this.location = locationId
+            let refCard = this //Store card obj to delete the initial one
+            let tableSlot
+            
+            removeFromArr(g[this.location], this) //Remove initial card obj
+
+            refCard.location = locationId
+
 
             //Find empty table slot or void              
             if(locationId == "table"){
@@ -283,11 +375,8 @@
                 for(let i = 1; i < 6; i++){
 
                     if(el(`${i}`).childNodes.length == 0){
-                        locationId = `${i}`
-                    }
-
-                    // console.log(locationId);
-                    
+                        tableSlot = `${i}`
+                    }                    
                 }
 
                 //Loop from slot 1.
@@ -298,6 +387,7 @@
 
                     if(i == 7){
                         locationId = "void"
+                        refCard.location = "void"
                         // console.log("Card voided."); 
                         placed = true
                         i = 6
@@ -305,6 +395,7 @@
 
                     if(el(`${i}`).childNodes.length == 0){
                         locationId = `${i}`
+                        
                         placed = true
                     }
 
@@ -313,12 +404,22 @@
                 }
             }
 
-            
-            el(locationId).append(cardHtmlElem)
+            //Move card object to appropriate game array
+            g[refCard.location].push(refCard)
 
-            // console.log(cardHtmlElem);
+            //Move html to table slot or containers
+            if(locationId === "table"){
+                el(tableSlot).append(refCard.htmlElem)
+            } 
+            else{
+                el(locationId).append(refCard.htmlElem)
+            }
+
+            g.updateUI()
         }
     }
+
+
 
 
 //START GAME
@@ -330,23 +431,66 @@
         
         //Add cards to game obj
         cardsRef.forEach(card =>{
+            if(card.hide !== "y"){
                 g.cardsRef.push(card)
-                g.pile.push(card)
+
+                //Add card to pile
+                new Card({
+                    "name": card.name,
+                    "location":"pile",
+                    "effect": "effect",
+                    "cost": "cost",
+                }) 
+            }
         })
 
-        cardsRef = g.cardsRef     
-        console.log(cardsRef);
+        // cardsRef = g.cardsRef     
+        // console.log(cardsRef);
            
 
         //Load/generate game
         g.updateUI()
-        g.startTurn()
+        g.nextTurn()
+
+
+        //Keyboard shortcuts (event = keyup or keydown)
+        // document.addEventListener('keydown', event => {
+        //     if (event.code === 'Space') {
+        //         g.nextTurn()
+        //     }
+        //     else if (event.code === 'KeyB') {
+        //         toggleModal(`bag`)
+        //     }
+        //     else if (event.code === 'KeyV') {
+        //         toggleModal(`void`)
+        //     }
+        // })
+
+        document.addEventListener('keydown', keyHandler);
     }
     
+    function keyHandler(event) {
+        if (event.code === 'Space') {
+            g.nextTurn();
+        } 
+        else if (event.code === 'KeyB') {
+            toggleModal('bag');
+        } 
+        else if (event.code === 'KeyV') {
+            toggleModal('void');
+        }
+    }
+    function newKeyHandler(event) {
+        if (event.code === 'Space') {
+            location.reload()
+        } 
+    }
 
 
-//Fetch csv file, parse to JSON, assing it to reg obj
-    fetch('./Library game cards [2024] - Sheet1.csv')
+
+
+//Fetch csv file, parse to JSON, assign it to ref obj
+    fetch('./items.csv')
         .then(response => response.text())
         .then(
             csvText  => {
