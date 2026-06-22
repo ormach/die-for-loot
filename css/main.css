@@ -74,7 +74,7 @@
         line-height: 40px;
     }
     h2{
-        font-size: 17px;
+        font-size: 24px;
         font-weight: 400;
         letter-spacing: 0.1px;
         font-family: 'Grenze', sans-serif;
@@ -178,26 +178,53 @@
         top: 24px;
 
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        
 
         z-index: 111;
 
-        height: calc(100vh - 48px);
+        height: calc(540px - 48px);
         width: 800px;
-        padding: 32px;
 
-        overflow-x: hidden;
-        overflow-y: scroll;
-
+        overflow: hidden;
         outline: solid 3000px var(--b50);
 
 
         .modalHeader{
+  
+            padding: 8px 8px 8px 32px;
+
+            background-color: var(--b10);
+
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
+
+            h1{
+                line-height: 32px;
+            }
+        }
+        .contentArea{
+            max-height: 100%;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+
+            padding: 32px;
+
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        #bag, #void {
+            gap: 4px;
+            flex-wrap: wrap;
+            flex-direction: row;
         }
     }
     #gameOver{
@@ -240,11 +267,37 @@
         width: calc((var(--card-width) + 20px) * 3);
         height: calc((var(--card-height) + 20px) * 2);
     }
+    #how{
+        flex-direction: column;
+        flex-wrap: nowrap;
+
+        h2{
+            color: white;
+        }
+    }
 
     .decoration{
         position: absolute;
         height: 560px;
         z-index: -1;
+    }
+
+    #selectionShade{
+        
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100vw;
+        height: 100vh;
+        
+        background-color: rgba(0,0,0,0.7);
+        backdrop-filter: blur(2px);
+
+        z-index: 10;
+    }
+    .selection{
+        z-index: 11 !important;
     }
 
 
@@ -258,7 +311,6 @@
         height: var(--card-height);
         width: var(--card-width);
 
-        cursor: grab;
         z-index: 2;
 
         position: relative;
@@ -270,7 +322,10 @@
             pointer-events: none;
         }
     }
-    .card:hover{
+    .clickable{
+        cursor: pointer !important;
+    }
+    .clickable:hover{
         z-index: 3;
         transform: translateY(-6px);
         transition: all 400ms;
@@ -322,7 +377,7 @@
             height: 18px;
             font-style: italic;
 
-            width: min-content;
+            width: max-content;
             padding: 4px 2px 2px 5px;
 
             color: white;
@@ -368,6 +423,17 @@
         bottom: 12px;
         right: 12px;
     }
+
+    .shake{
+        animation: ios-shake 0.2s infinite;
+    }
+    @keyframes ios-shake {
+        0%   { transform: rotate(0deg) translate(0px, 0px); }
+        25%  { transform: rotate(1.5deg) translate(1px, -1px); }
+        50%  { transform: rotate(-1.5deg) translate(-1px, 1px); }
+        75%  { transform: rotate(1deg) translate(1px, 1px); }
+        100% { transform: rotate(0deg) translate(0px, 0px); }
+    }
     
     
 
@@ -380,16 +446,18 @@
         height: 200px;
     }
     .die{
-        height: 72px;
-        width: 72px;
+        height: 60px;
+        width: 60px;
 
-        background-size: 72px 72px;
+        background-size: 60px 60px;
         box-shadow: 4px 4px 0px var(--b20);
         border-radius: 4px;
 
         cursor: grab;
 
         position: absolute;
+
+        z-index: 3;
     }
 
     .spin {animation: spin 1s cubic-bezier(0, 0, 0.05, 1);}

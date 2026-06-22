@@ -6,4 +6,7 @@ let config = {
 
     //Testing
         rClickEvent: true,
+
+        turnDice: 2,
+        flags: {used: 0},
 }

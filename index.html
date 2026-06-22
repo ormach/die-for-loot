@@ -81,29 +81,71 @@
                 
             <!-- Right buttons -->
             <div class="rightSection">
-                <button id="voidBtn" onclick="toggleModal(`void`)"></button>
-                <button id="bagBtn" onclick="toggleModal(`bag`)"></button>
+                <button id="howTo" onclick="toggleModal('how')">How to play</button>
+                <button id="voidBtn" onclick="toggleModal(`voidModal`)"></button>
+                <button id="bagBtn" onclick="toggleModal(`bagModal`)"></button>
             </div>
 
+
+            <!-- Modals -->
             <!-- Void -->
-            <div id="void" class="modal hide">
+            <div id="voidModal" class="modal hide">
                 <div class="modalHeader">
                     <h1>Void</h1>
-                    <button onclick="toggleModal(`void`)">Hide</button>
+                    <button onclick="toggleModal(`voidModal`)">Hide</button>
                 </div>
+                <div id="void" class="contentArea"></div>
             </div>
 
             <!-- Bag -->
-            <div id="bag" class="modal hide"> 
+            <div id="bagModal" class="modal hide"> 
                 <div class="modalHeader">
                     <h1>Bag</h1>
-                    <button onclick="toggleModal(`bag`)">Hide</button>
+                    <button onclick="toggleModal(`bagModal`)">Hide</button>
                 </div>
+                <div id="bag" class="contentArea"></div>
             </div>
 
-            <div id="gameOver" class="modal hide
-            "></div>
+            <div id="gameOver" class="modal hide">      
+            </div>
 
+            <div id="how" class="modal hide">
+
+                <div class="modalHeader">
+                    <h1>How to play</h1>
+                    <button onclick="toggleModal(`how`)">Hide</button>
+                </div>
+
+                <div class="contentArea">
+                    <h2>Game elements</h2>
+                        <ul>
+                            <li>Gemdice - Used as a currency to pay for items. drag and drop it on item to buy it.</li>
+                            <li>Pile</li>
+                            <li>Table</li>
+                            <li>Items</li>
+                            <li>Void</li>
+                            <li>Bag</li>
+                        </ul>
+    
+                    <h2>How to win</h2>
+                       <p>But 30 or more items.</p>
+    
+                    <h2>Game flow</h2>
+                        <ul>
+                            <li>Each turn 4 items will be placed on board and you will get 2 gemdice.</li>
+                            <li>Pay dice for items, use item effect to modify stuff.</li>
+                            <li>When you run out of things to do, start the next turn.</li>
+                            <li>Game end when you run out of items in pile.</li>
+                        </ul>
+                </div>
+
+                
+            </div>
+
+            <div id="selectionShade" class="hide"></div>
+
+
+            <!-- Scene images -->
             <img id="imgBg"   style="top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
             <img id="imgPile" style="top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
             <img id="imgGirl" style="top: -40px; left: -10px;" class="decoration" src="./img/ui-placeholders/girl.png" alt="">

@@ -1,4 +1,4 @@
-//Drag and drop 
+//DRAG AND DROP
 //Requires any ID for draggable elem
     let draggedElement
     let overlappingCard
@@ -8,10 +8,10 @@
         ev.preventDefault();
     }
 
-    //MOVE card
+    //MOVE element
     function drag(ev) {
         //Record dragged element
-        draggedElement = ev.target //logs picked card
+        draggedElement = ev.target //logs picked element
 
         //Records dragged element data to pass to drop(ev)
         ev.dataTransfer.setData("text/plain", ev.target.id);
@@ -19,7 +19,7 @@
         // console.log(ev.target.classList[0], ev.target.id, ev.target.dataset.rollvalue);
     }
 
-    //DROP card
+    //DROP element
     function drop(ev) {
         ev.preventDefault();
         
@@ -87,6 +87,25 @@
         }
 
     }
+
+    //Make base elem invisible during drag and drop
+    function fixDrag(elem){
+        elem.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setDragImage(elem, elem.offsetWidth / 2, elem.offsetHeight / 2);
+    
+            // Hide original after drag begins
+            setTimeout(() => {
+                elem.style.visibility = 'hidden';
+            }, 0);
+
+            // const preview = document.getElementById("imgGirl");
+            // e.dataTransfer.setDragImage(preview, 50, 50);
+        });
+        
+        elem.addEventListener('dragend', () => {
+            elem.style.visibility = '';
+        });
+    }
     
 
 
@@ -107,7 +126,6 @@
             this.turnCounter = 0
         }
 
-
         //Regen html based on game state
         updateUI(){
             el(`voidBtn`).innerHTML = `
@@ -125,14 +143,27 @@
 
         //Turn
         nextTurn(){
+
+            //Clear dice before card fx that trigger on movement.
+            this.clearDice()
+
+            //Reset table items & flags
+            g.table.forEach(item => {
+                item.flags = {...config.flags} //spread breaks ref with config object to avoid changing all instances
+
+                //Reset shake
+                if(item.effectType === "onclick"){
+                    item.htmlElem.childNodes[1].classList.add('shake')
+                }
+            })
     
-            //Move 4 items from pile to the table            
+            //Move 4 items to the table            
             if(this.pile.length > 3){
                 for(let i = 0; i < 4; i++){
                     rarr(this.pile).moveCard("table")
                 }
             }
-            //Moves remaining cards
+            //Moves remaining items
             else if(this.pile.length > 0 ){
                 let remainingCards = this.pile.length
 
@@ -140,10 +171,11 @@
                     rarr(this.pile).moveCard("table")
                 }
             } 
+            //Game over
             else{
                 this.gameOver()
             }
-
+            //Recolor next turn button for final turn
             if(this.pile.length === 0){
                 
                 el('turnBtn').innerHTML = `
@@ -154,15 +186,10 @@
                 el('turnBtn').classList.add("endRunBtn")
             }
             
-            this.turnCounter++
-
             //Get 2 dice
-            this.clearDice()
-            new Die
-            new Die
+            for(let i = 0; i < config.turnDice; i++){new Die}
 
-            console.log("Turn started");
-
+            this.turnCounter++
             this.updateUI()
         }
 
@@ -223,17 +250,61 @@
                 return true
             }            
         }
+
+        selectionMode (arg){
+
+            if(arg[0] === "diceExit"){
+                el('selectionShade').classList.add('hide')
+
+                g.dice.forEach(die =>{
+                    die.htmlElem.classList.add('spin')
+                    die.htmlElem.classList.remove('selection', 'shake', 'clickable')
+
+                    die.htmlElem.removeEventListener("click", returnTarget)
+
+                })
+            }
+            
+            
+            if(arg[0] === "dice"){
+                el('selectionShade').classList.remove('hide')
+
+                g.dice.forEach(die =>{
+                    die.htmlElem.classList.remove('spin')
+                    die.htmlElem.classList.add('selection', 'shake', 'clickable')
+
+                    const clickHandler = (event) => {
+                        arg[1].fx(["target", event.target])
+                        console.log(event.target)
+                    }
+
+                    g.activeItem = arg[1]
+                    die.htmlElem.addEventListener("click", returnTarget)
+                })
+            }
+        }
+    }
+
+    //Has to be separate & named, can't remove arrow function listener
+    function returnTarget(event){
+        g.activeItem.fx(["target", event.target])
     }
 
 
 //DIE
     class Die {
-        constructor(){
-            this.value = rng(6,1)
+        constructor(arg){
+
+            if(arg === undefined){
+                this.value = rng(6,1)
+            }else {
+                this.value = arg.value
+            }
+
             this.dieId = genId('di')
-            g.dice.push(this)
             
             this.genDieHtml()
+            g.dice.push(this)
 
             // console.log(g.dice);
         }
@@ -250,9 +321,25 @@
             die.setAttribute('data-rollvalue', this.value)
             
             // Image & position
+            let diePosition = {x: 0, y: 0}
+            let diceInHand = el("dice").childNodes.length
+            let diceOffset = 68
+
+            diePosition.y = diceInHand * diceOffset
+
+            if(diceInHand > 3){
+                diePosition.x = diceOffset
+                diePosition.y = (diceInHand - 4) * diceOffset
+            }
+            if(diceInHand > 7){
+                diePosition.x = diceOffset * 2
+                diePosition.y = (diceInHand - 8) * diceOffset
+            }
+
             die.setAttribute('style',`
                 background-image: url("./img/die/id=${this.value}.svg");
-                top: ${el("dice").childNodes.length * 100}px
+                bottom: ${diePosition.y}px;
+                left: ${diePosition.x}px;
             `) 
             
             el('dice').append(die)
@@ -260,23 +347,42 @@
 
             this.spinAnim()
 
+            //Removes the base image during drag and leaves the projection
+            fixDrag(die)
+
             // console.log(die);          
         }
 
+        //Trigger spin animation
         spinAnim(){
-            
             this.htmlElem.classList.remove("spin");
-
-            // force reflow so browser "resets" animation
-            void el.offsetWidth;
-
+            void el.offsetWidth; // force reflow so browser "resets" animation
             this.htmlElem.classList.add("spin");
+        }
+
+        delete(){
+            this.htmlElem.remove()
+            removeFromArr(g.dice, this)
+        }
+
+        split(){
+            let split = [1,1]
+
+            if(this.value > 1){
+                split[0] = Math.floor(this.value / 2)
+                split[1] = this.value - split[0]
+            }
             
+            new Die({value: split[0]})
+            new Die({value: split[1]})
+
+            this.delete()
+
         }
     }
 
 
-//CARD
+//ITEM
     class Card {
         constructor(args){
             
@@ -291,13 +397,18 @@
             this.location = args.location //stores id of location elem
           
             this.name   = this.cardRefObj.name
-            this.effect = this.cardRefObj.effect
+
+            this.effect = this.cardRefObj.effect //rename to effectDescription
+            this.effectType = this.cardRefObj.effectType
+
             this.type   = this.cardRefObj.type
-            this.cost   = this.cardRefObj.cost
-                    
-            //Check if no cards
-            // if (g.gameOver()) return   
-            // g.cards.push(this)    
+            this.cost   = this.cardRefObj.cost 
+            this.flags  = {...config.flags} //spread breaks ref with config object to avoid changing all instances
+
+            //Adds card function to the card
+            this.fx = itemEffectRef[this.name]
+            //Sets blank if no function is defined
+            if(itemEffectRef[this.name] === undefined){this.fx = function empty() {}}
             
             //Generate html elem
             this.genHtml()
@@ -307,26 +418,30 @@
         }
 
         //Returns card html element
-        //Used for LS regen
         genHtml(){
             let card = document.createElement('div')
             let cardImg = this.name
             
             card.id = this.cardId
             card.classList = 'card'
-            card.setAttribute('draggable','true')
-            card.setAttribute('ondragstart','drag(event)')
-            card.setAttribute('data-cost', this.cost)
+            // card.setAttribute('draggable','true')
+            // card.setAttribute('ondragstart','drag(event)')
+            card.setAttribute('data-cost', this.cost)      
             
-            // console.log(this.cardRefObj);          
-            
-            if(this.cardRefObj.img === "y"){   
-                card.setAttribute('style',`background-image: url("./img/card/id=${cardImg}.png")`) 
+            //IMG management
+            let img = this.name
+            if(this.cardRefObj.img !== "y"){img = "default"}
+            let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
+
+            //Adds on click event for html elem, click => onclick event not listener id
+            if(this.effectType === "onclick"){
+                card.addEventListener("click", () => {this.fx("used")})
+                card.classList.add('clickable')
+                imgString = `<img class="itemImg shake" src="./img/items/id=${img}.png">`
             }
 
-
             card.innerHTML = `
-                    <img class="itemImg" src="./img/items/id=${this.name}.png">
+                    ${imgString}
 
                     <div class="props">
                         <p>${upp(this.type)}</p>
@@ -336,27 +451,13 @@
                     <div class="card-data">
                         <p>${this.effect}</p>
                     </div>
-
             `
-
-            //On right click event
-            // card.addEventListener("contextmenu", (event) => {
-            //     if(config.rClickEvent == true){
-            //         if(this.location === "hand" || this.location.includes('page')){
-            //             this.location = "contract-content_slot-0"
-            //         } else {
-            //             this.location = "hand"
-            //         }
-            //         event.preventDefault();
-            //         this.moveCard(card, this.location)
-            //         g.saveGame()
-            //     }
-            // });
 
             //Store html elem in obj
             this.htmlElem = card
             return card
         }
+
 
         moveCard(locationId){
 
@@ -372,12 +473,12 @@
             if(locationId == "table"){
 
                 //If 6+ slot with card, then void
-                for(let i = 1; i < 6; i++){
+                // for(let i = 1; i < 6; i++){
 
-                    if(el(`${i}`).childNodes.length == 0){
-                        tableSlot = `${i}`
-                    }                    
-                }
+                //     if(el(`${i}`).childNodes.length == 0){
+                //         tableSlot = `${i}`
+                //     }                    
+                // }
 
                 //Loop from slot 1.
                 let i = 1;
@@ -385,17 +486,17 @@
 
                 while (placed == false) {
 
+                    //Void a card if loop checked all slots.
                     if(i == 7){
                         locationId = "void"
                         refCard.location = "void"
-                        // console.log("Card voided."); 
                         placed = true
                         i = 6
                     }
 
+                    //Check if slot has a child element.
                     if(el(`${i}`).childNodes.length == 0){
-                        locationId = `${i}`
-                        
+                        locationId = `${i}` //If slot is empty, set location
                         placed = true
                     }
 
@@ -404,7 +505,7 @@
                 }
             }
 
-            //Move card object to appropriate game array
+            //Move card obj to appropriate game array
             g[refCard.location].push(refCard)
 
             //Move html to table slot or containers
@@ -415,9 +516,68 @@
                 el(locationId).append(refCard.htmlElem)
             }
 
+            //Check for movement fx triggers
+            this.fx()
+
             g.updateUI()
         }
     }
+
+    let itemEffectRef = {
+        wallet(){
+            if(this.location !== "table") return
+            new Die
+            console.log(`${this.name} — triggered.`)
+        },
+        mirror(arg){
+
+            if(
+                   this.location !== "table" 
+                || arg !== "used" 
+                || this.flags.used > 0
+            ) return
+
+            new Die
+            this.flags.used++
+
+            //Remove css wiggle
+            this.htmlElem.childNodes[1].classList.remove("shake")
+
+            console.log(`${this.name} — triggered.`)
+        },
+        saw(arg){
+
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+                console.log(target);
+
+                target.split()
+                
+                
+                g.selectionMode(['diceExit'])
+            }
+
+            //Initiates selection mode
+            if(
+                   this.location !== "table" 
+                || arg !== "used" 
+                || this.flags.used > 0
+            ) return
+
+            g.selectionMode(['dice', this])
+
+            this.flags.used++
+
+            //Remove css wiggle
+            this.htmlElem.childNodes[1].classList.remove("shake")
+
+            console.log(`${this.name} — triggered.`)
+        }
+    }
+
 
 
 
@@ -469,15 +629,16 @@
         document.addEventListener('keydown', keyHandler);
     }
     
+    //KEYBOARD
     function keyHandler(event) {
         if (event.code === 'Space') {
             g.nextTurn();
         } 
         else if (event.code === 'KeyB') {
-            toggleModal('bag');
+            toggleModal('bagModal');
         } 
         else if (event.code === 'KeyV') {
-            toggleModal('void');
+            toggleModal('voidModal');
         }
     }
     function newKeyHandler(event) {
