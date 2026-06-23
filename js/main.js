@@ -191,8 +191,7 @@
             }
             
             //ROLL DICE
-            for(let i = 0; i < config.turnDice; i++){new Die}
-
+            this.addMultipleDice(config.turnDice)
 
             //TURN START EFFECTS
             //Passive: item effect that activate at the start of the turn
@@ -223,6 +222,11 @@
             //Generate a new one with combined roll value
             new Die({value:newRollValue})
         }
+        addMultipleDice(quant, args){
+            for(let i = 0; i < quant; i++){
+                new Die(args)
+            }
+        }
 
         gameOver(){
             if(this.pile.length < 1){
@@ -231,14 +235,18 @@
                 //Calc score
     
                 let runOutcome 
+                let total = g.cardsRef.length
+                let diamond = Math.floor(total * 0.90)
+                let golden = Math.floor(total * 0.80)
+                let silver = Math.floor(total * 0.70)
 
-                if(g.bag.length > 34){
+                if(g.bag.length >= diamond){
                     runOutcome = "Diamond"
                 }
-                else if (g.bag.length > 29){
+                else if (g.bag.length >= golden){
                     runOutcome = "Golden"
                 }
-                else if (g.bag.length > 25){
+                else if (g.bag.length >= silver){
                     runOutcome = "Silver"
                 }
                 else{
@@ -253,11 +261,13 @@
 
                     <p id="score">
                         Items in bag: ${g.bag.length} <br>
+                        Items in void: ${g.void.length} <br>
                         Turns: ${g.turnCounter}<br><br>
 
-                        Diamond run: 35<br>
-                        Golden run: 30<br>
-                        Silver run: 25<br>
+                        Total items: ${total}<br>
+                        Diamond run: ${diamond}<br>
+                        Golden run: ${golden}<br>
+                        Silver run: ${silver}<br>
                     </p>
 
                     <button onclick="location.reload()">Play again</button>
@@ -324,8 +334,6 @@
             
             this.genDieHtml()
             g.dice.push(this)
-
-            // console.log(g.dice);
         }
 
         //Adds die html element to #dice
@@ -473,7 +481,7 @@
             this.genHtml()
             
             //Append html element to location  
-            this.moveCard(args.location)
+            this.moveCard(args.location, {mode:"generation"})
             
         }
         setFlags(){
@@ -535,7 +543,7 @@
             return card
         }
 
-        moveCard(locationId){
+        moveCard(locationId, args){
 
             let refCard = this //Store card obj to delete the initial one
             let tableSlot
@@ -582,7 +590,10 @@
             }
 
             //Check for movement fx triggers
-            if(this.effectType.includes("onMove")){this.fx()}
+            if(this.effectType.includes("onMove")){
+                if(args !== undefined) return
+                this.fx()
+            }
 
             g.updateUI()
         }
@@ -620,6 +631,10 @@
         wallet(){
             if(!this.checkConditions({reqLocation: "table"})) return
             new Die
+        },
+        jewel(){
+            if(!this.checkConditions({})) return
+            new Die({value:1})
         },
 
         //Passive (on roll value set)
@@ -776,7 +791,28 @@
             
             //Eval roll value
             this.endEffect({uses: true})   
-        }
+        },
+        register(arg){
+
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+
+                let quantity = target.value
+                target.delete()
+
+                g.addMultipleDice(target.value, {value:1})
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
     }
 
 
