@@ -28,7 +28,7 @@
 
 /* For anchor links nav */
 /*outline*/
-body *{outline: 2px solid rgba(253, 253, 253, 0.23);}
+/* body *{outline: 2px solid rgba(253, 253, 253, 0.23);} */
 
     *, html{
         /* Disables gestures */
@@ -385,7 +385,7 @@ body *{outline: 2px solid rgba(253, 253, 253, 0.23);}
         }
     }
     .itemImg{
-        height: 120px;
+        height: 168px;
         width: 200px;
         top:-6px;
 

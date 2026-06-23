@@ -1,36 +1,44 @@
-name,cost,effect,type,hide,effectType,img,implemented,note
-saw,2,Use to split a die (once per turn).,tool,,onclick,y,y,core 
-glue,2,Use to merge 2 dice (once).,tool,y,,y,,core
-measuring tape,5,Use to gain 1 ghostdie for each empty table area (once).,tool,y,,,,
-catapult,3,Use to move 1 item from the table to the the pile (once).,tool,y,,y,,
-tax papers,6,When die roll value becomes 6| set it to 3.,tool,y,,,,
-club,6,*Once* effects can be activated 2 times.,tool,y,,,,
-bingo card,4,Use to move 3 items with the same cost to bag.,tool,y,,,,
-showel,2,Use to move 1 trinket from Void to table (once).,tool,y,,,,core / necro conf
-boardgame box,2,Use to store a die for the next turn.,tool,y,,,,core / complex
-slots,2,Use to roll 1 die. If roll is less than 3| move that many items to table.,tool,y,,,,
-grapling hook,6,When this is moved to table| one extra item is moved from pile.,tool,y,,,,bad
-waifu pillow,2,Use to rool a die (once). All die rolls are reduced by 2. ,tool,y,,,,
-book,2,Use to move 1 item to table| then gain 3 ghostdice.,tool,y,,,,
-tower,3,Use to reroll 1 die (once).,relic,,onclick,y,y,core
-crime evidence,4,Use to swap this with an item from Void or bag.,relic,y,,,,
-scales,4,Use to gain 1 ghostdie for each tool on the table (once).,relic,y,,,,
-wallet,4,When this is moved to table| get 1 die.,relic,,,y,y,core / ez
-calculator,4,Use to multiply the roll value of 1 die by 2.,relic,,onclick,y,y,core / ez
-bone,6,If this is in Void| use it to place it on table.,relic,y,,,,
-bar scanner,5,When a relic is moved to table| gain 1 ghosdie.,relic,y,,,,
-mirror,6,If you moved no items to Void| use this to gain 1 die (once).,relic,,onclick,y,y,
-fly tape,2,Use to place this on top of another item. Both items move together.,relic,y,,,,complex
-snake,3,When you roll a 2| place 2 items on table.,dead,y,,,,
-cat,3,When a relic is moved to table| move it to Void.,dead,y,,,,
-horse head,3,When you roll a 6| random tool is moved to Void.,dead,y,,,,
-mouse,4,Roll 1 less die at the start of the turn. Once per turn| gain 3.,dead,y,,,,
-jewel,1,Move this to Void| to roll an extra die.,trinket,y,,,,
-garbage,1,When this is moved| gain 1 antidie.,trinket,y,,,,
-ale,1,Use to reroll all dice| then send this to bag.,trinket,y,,,,
-counterspell,2,When this is moved on table| return all items to pile.,trinket,y,,,,
-head,5,Use to place 1 cursed item from void or bag on table (once).,cursed,y,,y,,
-bath water,5,When an item is moved to Void| gain 1 ghostdie.,cursed relic,y,,,,
-pickle,0,When this is moved to Void| move 1 item to bag.,cursed relic,y,,,,
-globules,5,Use to move 1 item from table to void| then roll 1 die.,cursed relic,y,,,,
-birthday candle,3,When this is moved| gain 1 ghostdie.,cursed dead,y,,,,
+name,implemented,cost,effect,type,hide,effectType,uses,img,note
+saw,y,2,Use to split a die (once per turn).,tool,,onClick,,y,
+catapult,,3,Use to move 1 item from the table to the the pile (once).,tool,y,,,y,
+chisel,y,2,Use to reduce die roll by 1 (twice).,tool,,onClick,2,y,
+wallet,y,4,When this is moved to table| get 1 die.,relic,,onMove,,y,
+tower,y,3,Use to reroll 1 die (once).,relic,,onClick,,y,
+calculator,y,4,Use to multiply the roll value of 1 die by 2.,relic,,onClick,,y,
+cloner,y,3,Use to duplicate a die (once).,relic,,onClick,,y,
+ball,y,6,If you moved no items to Void| use this to gain 1 die (once).,relic,,onClick,,y,
+box,,2,Use to store a die for the next turn.,tool,y,,,,core / complex
+glue,y,2,Use to merge 2 dice.,tool,,onClick,99,y,
+ruler,,5,Use to gain 1 ghostdie for each empty table area (once).,tool,y,,,,
+taxes,y,5,When die roll value becomes 6| set it to 3.,tool,,,,y,
+hammer,y,6,*Use to* effects can be activated one extra times.,tool,,turnStart,,y,
+bingo,,4,Use to move 3 items with the same cost to bag.,tool,y,,,,
+showel,,2,Use to move 1 trinket from Void to table (once).,tool,y,,,,core / necro conf
+slots,,2,Use to get 1 die. If its roll is less than 3| move that many items to table.,tool,y,onClick,99,y,
+rope,,6,When this is moved to table| one extra item is moved from pile.,tool,y,,,,bad
+pillow,,2,Use to rool a die (once). All die rolls are reduced by 2. ,tool,y,,,,
+book,,2,Use to move 1 item to table| then gain 3 ghostdice.,tool,y,,,,
+evidence,,4,Use to swap this with an item from Void or bag.,relic,y,,,,
+scales,,4,Use to gain 1 ghostdie for each tool on the table (once).,relic,y,,,,
+bone,,6,If this is in Void| use it to place it on table.,relic,y,,,,
+scanner,,5,When a relic is moved to table| gain 1 ghosdie.,relic,y,,,,
+tape,,2,Use to place this on top of another item. Both items move together.,relic,y,,,,complex
+snake,,3,When you roll a 2| place 2 items on table.,dead,y,,,,
+cat,,3,When a relic is moved to table| move it to Void.,dead,y,,,,
+horse,,3,When you roll a 6| random tool is moved to Void.,dead,y,,,,
+mouse,,4,Roll 1 less die at the start of the turn. Once per turn| gain 3.,dead,y,,,,
+jewel,,1,Move this to Void| to roll an extra die.,trinket,y,,,,
+garbage,,1,When this is moved| gain 1 antidie.,trinket,y,,,,
+ale,,1,Use to reroll all dice| then send this to bag.,trinket,y,,,,
+counterspell,,2,When this is moved on table| return all items to pile.,trinket,y,,,,
+zombie,,5,Use to place 1 cursed item from void or bag on table (once).,cursed,y,,,y,
+water,,5,When an item is moved to Void| gain 1 ghostdie.,cursed relic,y,,,,
+pickle,,0,When this is moved to Void| move 1 item to bag.,cursed relic,y,,,,
+globules,,5,Use to move 1 item from table to void| then roll 1 die.,cursed relic,y,,,,
+candle,,3,When this is moved| gain 1 ghostdie.,cursed dead,y,,,,
+head,y,6,,,,,,y,
+torso,y,5,,,,,,y,
+rarm,y,4,,,,,,y,
+rleg,y,3,,,,,,y,
+larm,y,2,,,,,,y,
+lleg,y,1,,,,,,y,

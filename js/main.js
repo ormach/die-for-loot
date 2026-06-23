@@ -124,6 +124,7 @@
             this.bag      = []
 
             this.turnCounter = 0
+            this.targets  = []
         }
 
         //Regen html based on game state
@@ -144,19 +145,22 @@
         //Turn
         nextTurn(){
 
+            //RESETS
             //Clear dice before card fx that trigger on movement.
             this.clearDice()
 
             //Reset table items & flags
             g.table.forEach(item => {
-                item.flags = {...config.flags} //spread breaks ref with config object to avoid changing all instances
+                item.setFlags()
 
                 //Reset shake
-                if(item.effectType === "onclick"){
+                if(item.effectType === "onClick"){
                     item.htmlElem.childNodes[1].classList.add('shake')
                 }
             })
+
     
+            //REVEAL
             //Move 4 items to the table            
             if(this.pile.length > 3){
                 for(let i = 0; i < 4; i++){
@@ -186,8 +190,17 @@
                 el('turnBtn').classList.add("endRunBtn")
             }
             
-            //Get 2 dice
+            //ROLL DICE
             for(let i = 0; i < config.turnDice; i++){new Die}
+
+
+            //TURN START EFFECTS
+            //Passive: item effect that activate at the start of the turn
+            g.table.forEach(item => {
+                if(item.effectType.includes("turnStart")){   
+                    item.fx()
+                }
+            })
 
             this.turnCounter++
             this.updateUI()
@@ -197,6 +210,18 @@
         clearDice(){
             g.dice = []
             el("dice").innerHTML = ``
+        }
+        mergeDice(arg){
+            let newRollValue = arg[0].value + arg[1].value
+            if (newRollValue > 6){newRollValue = 6}
+            
+            //Delete initial ones
+            arg.forEach(die =>{
+                die.delete()
+            })
+
+            //Generate a new one with combined roll value
+            new Die({value:newRollValue})
         }
 
         gameOver(){
@@ -275,12 +300,7 @@
                 if(g.mode === "diceSelection") return
                                 
                 g.dice.forEach(die =>{
-                    //Dice animations
-                    die.htmlElem.classList.add('spin')
-                    die.htmlElem.classList.remove('selection', 'shake', 'clickable')
-
-                    //Remove eventlistener
-                    die.htmlElem.removeEventListener("click", returnTarget)
+                    die.clearSelectionMode()
                 })
             }
         }
@@ -294,10 +314,11 @@
         constructor(arg){
 
             if(arg === undefined){
-                this.value = rng(6,1)
+                this.setRollValue(rng(6,1))
             }else {
-                this.value = arg.value
+                this.setRollValue(arg.value)
             }
+
 
             this.dieId = genId('di')
             
@@ -324,6 +345,37 @@
 
             fixDrag(die) //Removes the base image during drag and leaves the projection
         }
+
+        //Trigger spin animation
+        spinAnim(){
+            this.htmlElem.classList.remove("spin");
+            void el.offsetWidth; // force reflow so browser "resets" animation
+            this.htmlElem.classList.add("spin");
+        }
+
+        delete(){
+            this.htmlElem.remove()
+            removeFromArr(g.dice, this)
+        }
+        setRollValue(val){
+            this.value = val
+
+            //Passive: item effect when die roll value is set
+            g.table.forEach(item => {
+                if(
+                       item.effectType !== "onClick" 
+                    && item.effectType !== "turnStart"
+                    && item.effectType !== "onMove"
+                ){
+                    item.fx(this)        
+                }
+            })
+
+            //Update html
+            if(this.htmlElem === undefined) return
+            this.htmlElem.classList = `die die${this.value}`
+            this.htmlElem.setAttribute('data-rollvalue', this.value)
+        }
         setPosition(){
             // Image & position
             let diePosition = {x: 0, y: 0}
@@ -346,19 +398,23 @@
                 left: ${diePosition.x}px;
             `) 
         }
+        clearSelectionMode(){
+            //Dice animations
+            this.htmlElem.classList.add('spin')
+            this.htmlElem.classList.remove('selection', 'shake', 'clickable')
 
-        //Trigger spin animation
-        spinAnim(){
-            this.htmlElem.classList.remove("spin");
-            void el.offsetWidth; // force reflow so browser "resets" animation
-            this.htmlElem.classList.add("spin");
+            //Remove eventlistener
+            this.htmlElem.removeEventListener("click", returnTarget)
         }
 
-        delete(){
-            this.htmlElem.remove()
-            removeFromArr(g.dice, this)
+        //Items
+        moveItem(location, item){
+        
+            //Target item
+            //Where
         }
 
+        //Dice
         split(){
             let split = [1,1]
 
@@ -373,16 +429,17 @@
             this.delete()
 
         }
-
         duplicate(){
             new Die({value: this.value})
         }
-
-        reroll(){
-            this.value = rng(6,1)
-            this.htmlElem.classList = `die die${this.value}`
-            this.htmlElem.setAttribute('data-rollvalue', this.value)
+        multiply(){
+            let newValue = this.value * 2
+            if(newValue > 6){newValue = 6}
+            this.setRollValue(newValue)
         }
+        reroll(){
+            this.setRollValue(rng(6,1))
+        }  
     }
 
 
@@ -399,15 +456,13 @@
             //Set props
             this.cardId = genId('cr')
             this.location = args.location //stores id of location elem
-          
             this.name   = this.cardRefObj.name
-
             this.effect = this.cardRefObj.effect //rename to effectDescription
             this.effectType = this.cardRefObj.effectType
-
             this.type   = this.cardRefObj.type
             this.cost   = this.cardRefObj.cost 
-            this.flags  = {...config.flags} //spread breaks ref with config object to avoid changing all instances
+
+            this.setFlags()
 
             //Adds card function to the card
             this.fx = itemEffectRef[this.name]
@@ -418,7 +473,15 @@
             this.genHtml()
             
             //Append html element to location  
-            this.moveCard(args.location)  
+            this.moveCard(args.location)
+            
+        }
+        setFlags(){
+            this.flags  = {...config.flags} //spread breaks ref with config object to avoid changing all instances
+
+            if(this.cardRefObj.uses !== ""){
+                this.flags.uses = this.cardRefObj.uses
+            }
         }
 
         //Returns card html element
@@ -440,10 +503,20 @@
             let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
 
             //Adds on click event for html elem, click => onclick event not listener id
-            if(this.effectType === "onclick"){
+            if(this.effectType === "onClick"){
                 card.addEventListener("click", () => {this.fx("used")})
                 card.classList.add('clickable')
                 imgString = `<img class="itemImg shake" src="./img/items/id=${img}.png">`
+            }
+
+            //Hide effect description if blank
+            let description = `
+                <div class="card-data">
+                    <p>${this.effect}</p>
+                </div>
+            `
+            if(this.effect === ""){
+                description = `<div style="height:60px"></div>`
             }
 
             card.innerHTML = `
@@ -454,9 +527,7 @@
                         <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
                     </div>
 
-                    <div class="card-data">
-                        <p>${this.effect}</p>
-                    </div>
+                    ${description}
             `
 
             //Store html elem in obj
@@ -511,7 +582,7 @@
             }
 
             //Check for movement fx triggers
-            this.fx()
+            if(this.effectType.includes("onMove")){this.fx()}
 
             g.updateUI()
         }
@@ -535,16 +606,43 @@
             //Remove css wiggle
             if(args.uses) this.flags.uses--
 
-            this.htmlElem.childNodes[1].classList.remove("shake")
+            //Resets target storage 
+            g.targets = []
+
+            if(this.flags.uses === 0){
+                this.htmlElem.childNodes[1].classList.remove("shake")
+            }
         }
     }
 
     let itemEffectRef = {
+        //On move
         wallet(){
             if(!this.checkConditions({reqLocation: "table"})) return
             new Die
         },
-        mirror(arg){
+
+        //Passive (on roll value set)
+        taxes(arg){
+            if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
+            
+            if(arg.value === 6){
+                arg.value = 3
+            }
+        },
+        hammer(){
+            if(!this.checkConditions({reqLocation: "table"})) return
+
+            g.table.forEach(item => {
+                if(item.flags.uses > 0){            
+                    item.flags.uses++
+                }
+            })
+            
+        },
+
+        //Active
+        ball(arg){
             if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             new Die
             this.endEffect({uses: true})            
@@ -568,6 +666,24 @@
             g.selectionMode(['dice', this])
         },
         calculator(arg){
+
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+
+                target.multiply(2)
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
+        cloner(arg){
 
             //Handles returned die
             if(arg !== undefined && arg[0] === "target"){
@@ -603,6 +719,64 @@
             if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             g.selectionMode(['dice', this])
         },
+        chisel(arg){
+
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+
+                console.log(target);
+                
+                let newValue = target.value - 1
+
+                target.setRollValue(newValue)
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
+        glue(arg){
+            
+            //Select 1st die.
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+                target.clearSelectionMode()
+                g.targets.push(target)
+            }
+
+            //Select 2nd die.
+            if(g.targets.length === 2){
+
+                g.mergeDice(g.targets)
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
+        slots(arg){
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            let die = new Die
+
+            console.log(die.value);
+            if(die.value > 3){
+
+            }
+            
+            //Eval roll value
+            this.endEffect({uses: true})   
+        }
     }
 
 

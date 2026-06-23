@@ -5,3 +5,4 @@ Concepts
 - "+1 ghost die" instead of "gain 1", a special die that you can move on another die to increase it.
 - Create spritesheet with dice rotation.
 - Add game method to rearrange the dice.
+- Passive: If die roll value exceeds 6, get excess as a separate die.
