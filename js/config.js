@@ -8,5 +8,5 @@ let config = {
         rClickEvent: true,
 
         turnDice: 2,
-        flags: {used: 0},
+        flags: {uses: 1},
 }

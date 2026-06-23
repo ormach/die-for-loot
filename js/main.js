@@ -197,8 +197,6 @@
         clearDice(){
             g.dice = []
             el("dice").innerHTML = ``
- 
-            // console.log("Dice cleared.");           
         }
 
         gameOver(){
@@ -251,44 +249,44 @@
             }            
         }
 
-        selectionMode (arg){
+        selectionMode(arg){
 
-            if(arg[0] === "diceExit"){
-                el('selectionShade').classList.add('hide')
-
-                g.dice.forEach(die =>{
-                    die.htmlElem.classList.add('spin')
-                    die.htmlElem.classList.remove('selection', 'shake', 'clickable')
-
-                    die.htmlElem.removeEventListener("click", returnTarget)
-
-                })
-            }
-            
-            
+            // Enters mode
             if(arg[0] === "dice"){
-                el('selectionShade').classList.remove('hide')
+                el('selectionShade').classList.remove('hide') //toggle shade
+                g.mode = "diceSelection"
 
                 g.dice.forEach(die =>{
+                    //Dice animations
                     die.htmlElem.classList.remove('spin')
                     die.htmlElem.classList.add('selection', 'shake', 'clickable')
 
-                    const clickHandler = (event) => {
-                        arg[1].fx(["target", event.target])
-                        console.log(event.target)
-                    }
+                    g.activeItem = arg[1] //Store active item for reference in effect method
+                    die.htmlElem.addEventListener("click", returnTarget) //Add event listener that stores clicked element
+                })
+            }
 
-                    g.activeItem = arg[1]
-                    die.htmlElem.addEventListener("click", returnTarget)
+            // Exits mode
+            if(arg[0] === "exit"){
+                el('selectionShade').classList.add('hide') //toggle shade
+                g.mode = false
+                
+                //Same thing should work for items and dice
+                if(g.mode === "diceSelection") return
+                                
+                g.dice.forEach(die =>{
+                    //Dice animations
+                    die.htmlElem.classList.add('spin')
+                    die.htmlElem.classList.remove('selection', 'shake', 'clickable')
+
+                    //Remove eventlistener
+                    die.htmlElem.removeEventListener("click", returnTarget)
                 })
             }
         }
     }
-
-    //Has to be separate & named, can't remove arrow function listener
-    function returnTarget(event){
-        g.activeItem.fx(["target", event.target])
-    }
+    // Return clicked elem via listener. Has to be separate & named, can't remove arrow function listener
+    function returnTarget(event){g.activeItem.fx(["target", event.target])}
 
 
 //DIE
@@ -314,12 +312,19 @@
             let die = document.createElement('div')
             
             die.id = this.dieId
-            die.classList = 'die'
+            die.classList = `die die${this.value}`
             die.setAttribute('draggable','true')
             die.setAttribute('ondragstart','drag(event)')
-
             die.setAttribute('data-rollvalue', this.value)
             
+            el('dice').append(die)
+            this.htmlElem = die
+            this.spinAnim()
+            // this.setPosition()
+
+            fixDrag(die) //Removes the base image during drag and leaves the projection
+        }
+        setPosition(){
             // Image & position
             let diePosition = {x: 0, y: 0}
             let diceInHand = el("dice").childNodes.length
@@ -336,21 +341,10 @@
                 diePosition.y = (diceInHand - 8) * diceOffset
             }
 
-            die.setAttribute('style',`
-                background-image: url("./img/die/id=${this.value}.svg");
+            this.htmlElem.setAttribute('style',`
                 bottom: ${diePosition.y}px;
                 left: ${diePosition.x}px;
             `) 
-            
-            el('dice').append(die)
-            this.htmlElem = die
-
-            this.spinAnim()
-
-            //Removes the base image during drag and leaves the projection
-            fixDrag(die)
-
-            // console.log(die);          
         }
 
         //Trigger spin animation
@@ -378,6 +372,16 @@
 
             this.delete()
 
+        }
+
+        duplicate(){
+            new Die({value: this.value})
+        }
+
+        reroll(){
+            this.value = rng(6,1)
+            this.htmlElem.classList = `die die${this.value}`
+            this.htmlElem.setAttribute('data-rollvalue', this.value)
         }
     }
 
@@ -426,6 +430,8 @@
             card.classList = 'card'
             // card.setAttribute('draggable','true')
             // card.setAttribute('ondragstart','drag(event)')
+            card.setAttribute('ondrop','drop(event)')
+            card.setAttribute('ondragover','allowDrop(event)')
             card.setAttribute('data-cost', this.cost)      
             
             //IMG management
@@ -445,7 +451,7 @@
 
                     <div class="props">
                         <p>${upp(this.type)}</p>
-                        <img class="cost" src="./img/die/id=${this.cost}.png"></img>
+                        <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
                     </div>
 
                     <div class="card-data">
@@ -458,27 +464,16 @@
             return card
         }
 
-
         moveCard(locationId){
 
             let refCard = this //Store card obj to delete the initial one
             let tableSlot
             
             removeFromArr(g[this.location], this) //Remove initial card obj
-
-            refCard.location = locationId
-
+            refCard.location = locationId //Store location, it changes below
 
             //Find empty table slot or void              
-            if(locationId == "table"){
-
-                //If 6+ slot with card, then void
-                // for(let i = 1; i < 6; i++){
-
-                //     if(el(`${i}`).childNodes.length == 0){
-                //         tableSlot = `${i}`
-                //     }                    
-                // }
+            if(locationId === "table"){
 
                 //Loop from slot 1.
                 let i = 1;
@@ -501,7 +496,6 @@
                     }
 
                     i++;
-
                 }
             }
 
@@ -521,29 +515,39 @@
 
             g.updateUI()
         }
+
+        checkConditions(args){
+            let pass = true
+            
+            //Check location 
+            if(args.reqLocation !== undefined && this.location !== args.reqLocation) pass = false
+
+            //Check use charges
+            if(args.uses !== undefined && this.flags.uses === 0) pass = false
+            
+            //Check if it was clicked TBA
+
+            console.log(`${this.name} — activation conditions passed: ${pass}`)
+            return pass
+        }
+
+        endEffect(args){
+            //Remove css wiggle
+            if(args.uses) this.flags.uses--
+
+            this.htmlElem.childNodes[1].classList.remove("shake")
+        }
     }
 
     let itemEffectRef = {
         wallet(){
-            if(this.location !== "table") return
+            if(!this.checkConditions({reqLocation: "table"})) return
             new Die
-            console.log(`${this.name} — triggered.`)
         },
         mirror(arg){
-
-            if(
-                   this.location !== "table" 
-                || arg !== "used" 
-                || this.flags.used > 0
-            ) return
-
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             new Die
-            this.flags.used++
-
-            //Remove css wiggle
-            this.htmlElem.childNodes[1].classList.remove("shake")
-
-            console.log(`${this.name} — triggered.`)
+            this.endEffect({uses: true})            
         },
         saw(arg){
 
@@ -552,30 +556,53 @@
 
                 //Finds object by html id
                 let target = findByProperty(g.dice, "dieId", arg[1].id)
-                console.log(target);
 
                 target.split()
                 
-                
-                g.selectionMode(['diceExit'])
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
             }
 
             //Initiates selection mode
-            if(
-                   this.location !== "table" 
-                || arg !== "used" 
-                || this.flags.used > 0
-            ) return
-
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             g.selectionMode(['dice', this])
+        },
+        calculator(arg){
 
-            this.flags.used++
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
 
-            //Remove css wiggle
-            this.htmlElem.childNodes[1].classList.remove("shake")
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
 
-            console.log(`${this.name} — triggered.`)
-        }
+                target.duplicate()
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
+        tower(arg){
+
+            //Handles returned die
+            if(arg !== undefined && arg[0] === "target"){
+
+                //Finds object by html id
+                let target = findByProperty(g.dice, "dieId", arg[1].id)
+
+                target.reroll()
+                
+                g.selectionMode(['exit'])
+                this.endEffect({uses: true})
+            }
+
+            //Initiates selection mode
+            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+            g.selectionMode(['dice', this])
+        },
     }
 
 
@@ -602,29 +629,11 @@
                     "cost": "cost",
                 }) 
             }
-        })
-
-        // cardsRef = g.cardsRef     
-        // console.log(cardsRef);
-           
+        }) 
 
         //Load/generate game
         g.updateUI()
         g.nextTurn()
-
-
-        //Keyboard shortcuts (event = keyup or keydown)
-        // document.addEventListener('keydown', event => {
-        //     if (event.code === 'Space') {
-        //         g.nextTurn()
-        //     }
-        //     else if (event.code === 'KeyB') {
-        //         toggleModal(`bag`)
-        //     }
-        //     else if (event.code === 'KeyV') {
-        //         toggleModal(`void`)
-        //     }
-        // })
 
         document.addEventListener('keydown', keyHandler);
     }

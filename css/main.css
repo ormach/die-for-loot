@@ -28,7 +28,7 @@
 
 /* For anchor links nav */
 /*outline*/
-/* body *{outline: 2px solid rgba(253, 253, 253, 0.23);} */
+body *{outline: 2px solid rgba(253, 253, 253, 0.23);}
 
     *, html{
         /* Disables gestures */
@@ -440,10 +440,16 @@
 /* DICE */
     #dice{       
         display: flex;
-        justify-content: center; 
-
-        position: relative;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-end; 
+        align-items: flex-start;
+        flex-direction: column;
+    
         height: 200px;
+        max-width: 148px;
+        width: 100%;
+        flex: 1;
     }
     .die{
         height: 60px;
@@ -455,10 +461,17 @@
 
         cursor: grab;
 
-        position: absolute;
+        /* position: absolute; */
 
         z-index: 3;
     }
+        .die1{background-image: url("../img/die/id=1.svg");}
+        .die2{background-image: url("../img/die/id=2.svg");}
+        .die3{background-image: url("../img/die/id=3.svg");}
+        .die4{background-image: url("../img/die/id=4.svg");}
+        .die5{background-image: url("../img/die/id=5.svg");}
+        .die6{background-image: url("../img/die/id=6.svg");}
+
 
     .spin {animation: spin 1s cubic-bezier(0, 0, 0.05, 1);}
 
