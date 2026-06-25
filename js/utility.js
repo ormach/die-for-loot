@@ -1,6 +1,6 @@
 function runAnim(elem, animClass){//Allows to run css animation mutliple times
     elem.classList.remove(animClass)
-    void elem.offsetWidth; // trigger reflow
+    void elem.offsetWidth; // enable reflow
     elem.classList.add(animClass)
 }
 

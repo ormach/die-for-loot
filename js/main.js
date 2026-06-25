@@ -125,6 +125,8 @@
 
             this.turnCounter = 0
             this.targets  = []
+
+            this.itemsPerTurn = confirm.itemsPerTurn
         }
 
         //Regen html based on game state
@@ -145,25 +147,50 @@
         //Turn
         nextTurn(){
 
+            
             //RESETS
-            //Clear dice before card fx that trigger on movement.
+            //Clear dice before card onMove fx.
             this.clearDice()
-
+            g.itemsPerTurn = config.itemsPerTurn
+            
             //Reset table items & flags
             g.table.forEach(item => {
                 item.setFlags()
+                
+                //Reset shake, uses
+                item.updateHtml()
+            })
+            
 
-                //Reset shake
-                if(item.effectType === "onClick"){
-                    item.htmlElem.childNodes[1].classList.add('shake')
+            //TRIGGER : turnEnd
+            g.table.forEach(item => {
+                if(item.effectType !== "turnEnd") return
+                item.fx()
+            })
+    
+
+            //REVEAL 4 ITEMS
+            this.reveal(this.itemsPerTurn)
+            
+
+            //ROLL DICE
+            this.addMultipleDice(config.turnDice)
+
+
+            //TRIGGER : turnStart : item effect that activate at the start of the turn
+            g.table.forEach(item => {
+                if(item.effectType.includes("turnStart")){   
+                    item.fx()
                 }
             })
 
-    
-            //REVEAL
-            //Move 4 items to the table            
-            if(this.pile.length > 3){
-                for(let i = 0; i < 4; i++){
+            this.turnCounter++
+            this.updateUI()
+        }
+
+        reveal(quant){
+            if(this.pile.length >= quant){
+                for(let i = 0; i < quant; i++){
                     rarr(this.pile).moveCard("table")
                 }
             }
@@ -175,12 +202,11 @@
                     rarr(this.pile).moveCard("table")
                 }
             } 
-            //Game over
-            else{
-                this.gameOver()
-            }
-            //Recolor next turn button for final turn
+
+
+            //Pile hits 0 => Last turn
             if(this.pile.length === 0){
+                el('turnBtn').setAttribute('onclick', 'g.gameOver()')
                 
                 el('turnBtn').innerHTML = `
                     End game 
@@ -189,20 +215,6 @@
 
                 el('turnBtn').classList.add("endRunBtn")
             }
-            
-            //ROLL DICE
-            this.addMultipleDice(config.turnDice)
-
-            //TURN START EFFECTS
-            //Passive: item effect that activate at the start of the turn
-            g.table.forEach(item => {
-                if(item.effectType.includes("turnStart")){   
-                    item.fx()
-                }
-            })
-
-            this.turnCounter++
-            this.updateUI()
         }
 
         //Clear dice
@@ -354,7 +366,7 @@
             fixDrag(die) //Removes the base image during drag and leaves the projection
         }
 
-        //Trigger spin animation
+        //Run spin animation
         spinAnim(){
             this.htmlElem.classList.remove("spin");
             void el.offsetWidth; // force reflow so browser "resets" animation
@@ -365,21 +377,30 @@
             this.htmlElem.remove()
             removeFromArr(g.dice, this)
         }
-        setRollValue(val){
+        setRollValue(val, bypassOnRollFx){
+
+            //Normalize rolls
+            if (val < 1) val = 1
+            if (val > 6) val = 6
+
             this.value = val
 
-            //Passive: item effect when die roll value is set
-            g.table.forEach(item => {
-                if(
-                       item.effectType !== "onClick" 
-                    && item.effectType !== "turnStart"
-                    && item.effectType !== "onMove"
-                ){
+
+            //TRIGGER : onRoll : item effect when die roll value is set
+            if(bypassOnRollFx === undefined){
+                console.log(1);
+
+                g.table.forEach(item => {
+                    if(item.effectType !== "onRoll") return
                     item.fx(this)        
-                }
-            })
+                })
+            }
 
             //Update html
+            this.updateHtml()
+        }
+  
+        updateHtml(){
             if(this.htmlElem === undefined) return
             this.htmlElem.classList = `die die${this.value}`
             this.htmlElem.setAttribute('data-rollvalue', this.value)
@@ -507,8 +528,8 @@
             
             //IMG management
             let img = this.name
-            if(this.cardRefObj.img !== "y"){img = "default"}
             let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
+            
 
             //Adds on click event for html elem, click => onclick event not listener id
             if(this.effectType === "onClick"){
@@ -516,6 +537,7 @@
                 card.classList.add('clickable')
                 imgString = `<img class="itemImg shake" src="./img/items/id=${img}.png">`
             }
+
 
             //Hide effect description if blank
             let description = `
@@ -527,11 +549,21 @@
                 description = `<div style="height:60px"></div>`
             }
 
+
+            let uses = ""
+            
+
+            if(this.flags.uses !== undefined){
+                
+                uses = this.flags.uses
+            }
+
             card.innerHTML = `
                     ${imgString}
 
                     <div class="props">
                         <p>${upp(this.type)}</p>
+                        <p>${uses}</p>
                         <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
                     </div>
 
@@ -542,6 +574,49 @@
             this.htmlElem = card
             return card
         }
+            updateHtml(){
+                //Rework it to only update cost uses etc.
+
+                this.htmlElem.setAttribute('data-cost', this.cost)   
+
+                //IMG management
+                let img = this.name
+                let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
+
+
+                 //Adds on click event for html elem, click => onclick event not listener id
+                if(this.effectType === "onClick" && this.flags.uses > 0){
+                    imgString = `<img class="itemImg shake" src="./img/items/id=${img}.png">`
+                }
+
+
+                //Hide effect description if blank
+                let description = `
+                    <div class="card-data">
+                        <p>${this.effect}</p>
+                    </div>
+                `
+                if(this.effect === ""){
+                    description = `<div style="height:60px"></div>`
+                }
+
+                let uses = ""
+                if(this.flags.uses !== undefined){
+                    uses = this.flags.uses
+                }
+
+                this.htmlElem.innerHTML = `
+                        ${imgString}
+
+                        <div class="props">
+                            <p>${upp(this.type)}</p>
+                            <p>${uses}</p>
+                            <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
+                        </div>
+
+                        ${description}
+                `
+            }
 
         moveCard(locationId, args){
 
@@ -589,16 +664,26 @@
                 el(locationId).append(refCard.htmlElem)
             }
 
-            //Check for movement fx triggers
+            //TRIGGER : onMove : Check for movement fx
             if(this.effectType.includes("onMove")){
-                if(args !== undefined) return
+                if(args !== undefined) return //why
                 this.fx()
+            }
+
+            //TRIGGER : onOtherMove : If item moves to void, check table for effects.
+            if(this.location === "void" || this.location === "bag" || this.location === "table"){
+                g.table.forEach(item => {
+                    if(item.effectType !== "onOtherMove") return
+                    item.fx(this)
+                })
             }
 
             g.updateUI()
         }
 
         checkConditions(args){
+            // console.log(args.targetType[1].name);
+            
             let pass = true
             
             //Check location 
@@ -606,6 +691,13 @@
 
             //Check use charges
             if(args.uses !== undefined && this.flags.uses === 0) pass = false
+
+            //Check target type (other item)
+            if(args.targetType !== undefined && args.targetType !== args.target.type) pass = false
+
+            //Check target location (other item)
+            if(args.targetType !== undefined && args.targetLocation !== args.target.location) pass = false
+
             
             //Check if it was clicked TBA
 
@@ -620,40 +712,110 @@
             //Resets target storage 
             g.targets = []
 
-            if(this.flags.uses === 0){
-                this.htmlElem.childNodes[1].classList.remove("shake")
-            }
+            // if(this.flags.uses === 0){
+            //     this.htmlElem.childNodes[1].classList.remove("shake")
+            // }
+            this.updateHtml()
         }
     }
 
     let itemEffectRef = {
-        //On move
-        wallet(){
-            if(!this.checkConditions({reqLocation: "table"})) return
+        //On move (self)
+        piggy(){
+            if(!this.checkConditions({reqLocation: "bag"})) return
             new Die
         },
-        jewel(){
+        jackplane(){
             if(!this.checkConditions({})) return
             new Die({value:1})
         },
 
-        //Passive (on roll value set)
-        taxes(arg){
+        //onOtherMove
+        jar(item){
+            if(!this.checkConditions({reqLocation: "table"})) return
+            new Die({value:1})
+        },
+        binder(item){
+            if(!this.checkConditions({reqLocation: "table"})) return
+            new Die()
+        },
+        cat(item){
+            if(!this.checkConditions({
+                reqLocation: "table", 
+                target: item,
+                targetType: "relic",
+                targetLocation: "table",
+            })) return
+            
+            item.moveCard("void")
+        },
+
+        //onRoll (arg is a die object)
+        tax(arg){
             if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
             
             if(arg.value === 6){
                 arg.value = 3
             }
         },
-        hammer(){
+        snake(arg){
+            if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
+
+            let val = arg.value - 1
+
+            arg.setRollValue(val, true)            
+        },
+        zombie(arg){
+            if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
+
+            if(arg.value === 2){
+                g.reveal(2)
+            }
+        },
+        rope(arg){
+            if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
+            
+            if(arg.value === 6){
+                let removed = false
+
+                g.table.forEach(item => {
+                    if(item.type === "tool" && removed === false){
+                        item.moveCard("void")
+                        removed = true
+                    }
+                })
+            }
+        },
+
+        //turnStart
+        delay(){
             if(!this.checkConditions({reqLocation: "table"})) return
 
             g.table.forEach(item => {
-                if(item.flags.uses > 0){            
-                    item.flags.uses++
+                if(item.flags.uses > 0){      
+                    if(item.type !== "tool") return 
+
+                    item.flags.uses = item.cost
+
+                    item.updateHtml()
                 }
             })
             
+        },
+        sale(){
+            if(!this.checkConditions({reqLocation: "table"})) return
+
+            g.table.forEach(item => {
+                if(item.cost < 2) return
+                item.cost --
+                item.updateHtml()
+            })
+        },
+
+        //turnEnd
+        limit(){
+            if(!this.checkConditions({reqLocation: "table"})) return
+            g.itemsPerTurn = 3
         },
 
         //Active
@@ -698,7 +860,7 @@
             if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             g.selectionMode(['dice', this])
         },
-        cloner(arg){
+        printer(arg){
 
             //Handles returned die
             if(arg !== undefined && arg[0] === "target"){
@@ -741,8 +903,6 @@
 
                 //Finds object by html id
                 let target = findByProperty(g.dice, "dieId", arg[1].id)
-
-                console.log(target);
                 
                 let newValue = target.value - 1
 
@@ -780,19 +940,7 @@
             if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
             g.selectionMode(['dice', this])
         },
-        slots(arg){
-            if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
-            let die = new Die
-
-            console.log(die.value);
-            if(die.value > 3){
-
-            }
-            
-            //Eval roll value
-            this.endEffect({uses: true})   
-        },
-        register(arg){
+        hammer(arg){
 
             //Handles returned die
             if(arg !== undefined && arg[0] === "target"){

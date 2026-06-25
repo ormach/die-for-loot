@@ -4,9 +4,10 @@ let config = {
         albumRows: 2,
         albumColumns: 3,
 
-    //Testing
-        rClickEvent: true,
-
+    //Game settings
         turnDice: 2,
-        flags: {uses: 1},
+        itemsPerTurn: 4,
+
+    //Item flags
+        flags: {},
 }
