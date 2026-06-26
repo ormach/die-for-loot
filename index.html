@@ -81,7 +81,7 @@
                 
             <!-- Right buttons -->
             <div class="rightSection">
-                <button id="howTo" onclick="toggleModal('how')">How to play</button>
+                <!-- <button id="howTo" onclick="toggleModal('how')">How to play</button> -->
                 <button id="voidBtn" onclick="toggleModal(`voidModal`)"></button>
                 <button id="bagBtn" onclick="toggleModal(`bagModal`)"></button>
             </div>
@@ -142,10 +142,16 @@
                 
             </div>
 
-            <div id="selectionShade" class="hide"></div>
+            <div id="selectionShade" class="hide">
+                <button onclick="g.selectionMode({mode:'exit'})">
+                    Cancel & go back
+                    <img src="./img/ico/id=arrow-r.svg">
+                </button>
+            </div>
 
 
             <!-- Scene images -->
+            <img id="mover" class="">
             <img id="imgBg"   style="top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
             <img id="imgPile" style="top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
             <img id="imgGirl" style="top: -40px; left: -10px;" class="decoration" src="./img/ui-placeholders/girl.png" alt="">
@@ -173,4 +179,10 @@
 <script src="js/utility.js"></script>
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>
+
+<script src="js/actionqueue.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/dice.js"></script>
+<script src="js/items.js"></script>
+
 <script src="js/main.js"></script>

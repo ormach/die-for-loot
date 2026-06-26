@@ -75,6 +75,22 @@ function removeDuplicatesArr(arr){
     return [...new Set(arr)];
 }
 
+function checkDuplicates(arr, quantOfDuplicates){
+    //Take array of digits [1,2,3,3]
+    //Looks for diplicates and returns value that has a particular number of duplicates.
+    //quantOfDuplicated control how many duplicate values should there be for the value to be returned
+
+    const counts = {};
+
+    for (const value of arr) {
+        counts[value] = (counts[value] || 0) + 1;
+    }
+
+    const duplicates = Object.keys(counts).filter(key => counts[key] >= quantOfDuplicates);
+
+    return duplicates; // ["1", "2"]
+}
+
 function findObj(data, prop, val){ //Returns one obj with matching property value from data
     return data.find(x => x[prop] === val) 
 }
