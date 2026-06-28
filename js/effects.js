@@ -4,9 +4,9 @@ let itemEffectRef = {
         if(!this.checkConditions({reqLocation: "bag"})) return
         new Die
     },
-    jackplane(){
+    bucket(){
         if(!this.checkConditions({})) return
-        new Die({value:1})
+        new Die({value:2})
     },
     crown(){
         if(!this.checkConditions({reqLocation: "void"})) return
@@ -83,7 +83,7 @@ let itemEffectRef = {
     },
 
     //turnStart
-    delay(){
+    async delay(){
         if(!this.checkConditions({reqLocation: "table"})) return
 
         g.table.forEach(item => {

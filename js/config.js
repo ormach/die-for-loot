@@ -7,6 +7,7 @@ let config = {
     //Game settings
         turnDice: 2,
         itemsPerTurn: 4,
+        aDelay: 300,
 
     //Item flags
         flags: {},

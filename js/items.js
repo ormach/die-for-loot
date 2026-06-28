@@ -95,22 +95,34 @@ class Card {
         }
 
 
+        //Uses
         let uses = ""
-        
-
-        if(this.flags.uses !== undefined){
-            
-            uses = this.flags.uses
-        }
+            if(this.flags.uses !== undefined && this.flags.uses > 1){
+                uses = `
+                    <img src="./img/ui/dot-separator.svg">
+                    <p>
+                        ${this.flags.uses} uses
+                    </p>
+                `
+            }
+            else if (this.flags.uses !== undefined) {
+                uses = `
+                    <img src="./img/ui/dot-separator.svg">
+                    <p>
+                        ${this.flags.uses} use
+                    </p>
+                `
+            }
 
         card.innerHTML = `
                 ${imgString}
 
                 <div class="props">
                     <p>${upp(this.type)}</p>
-                    <p>${uses}</p>
-                    <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
+                    ${uses}
                 </div>
+
+                <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
 
                 ${description}
         `
@@ -145,25 +157,41 @@ class Card {
                 description = `<div style="height:60px"></div>`
             }
 
+            //Uses
             let uses = ""
-            if(this.flags.uses !== undefined){
-                uses = this.flags.uses
+            if(this.flags.uses !== undefined && this.flags.uses > 1){
+                uses = `
+                    <img src="./img/ui/dot-separator.svg">
+                    <p>
+                        ${this.flags.uses} uses
+                    </p>
+                `
             }
+            else if (this.flags.uses !== undefined) {
+                uses = `
+                    <img src="./img/ui/dot-separator.svg">
+                    <p>
+                        ${this.flags.uses} use
+                    </p>
+                `
+            }
+            
 
             this.htmlElem.innerHTML = `
                     ${imgString}
 
                     <div class="props">
                         <p>${upp(this.type)}</p>
-                        <p>${uses}</p>
-                        <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
+                        ${uses}
                     </div>
+
+                    <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
 
                     ${description}
             `
         }
 
-        moveCard(locationId, args){
+        async moveCard(locationId, args){
             //args — for onMove effects            
 
             
@@ -201,12 +229,10 @@ class Card {
 
             //Move card obj to appropriate game array
             g[refCard.location].push(refCard)
-
-            //Move animation 
-            // this.animation()
-            // let mover = el("mover")
-            // mover.setAttribute("src",`./img/items/id=${this.name}.png`)
-            // runAnim(mover,`move-${this.location}`)
+            
+            if(!g.initialGen){
+                await this.animation()
+            }
 
             //Move HTML to table slot or containers
             el(locationId).append(refCard.htmlElem)
@@ -239,6 +265,31 @@ class Card {
 
             g.updateUI()
         }
+            async animation(){
+
+                //Move animation 
+                let mover = el("mover")
+                mover.classList.toggle('hide')
+                mover.setAttribute("src",`./img/items/id=${this.name}.png`)
+                // console.log(this.location);
+                
+                mover.classList = "" //Clear class list before animation switch
+                runAnim(mover,`move-${this.location}`)
+                runAnim(el("imgGirl"),`throw`)
+
+                
+                //DELAY
+                await pause(config.aDelay); 
+                
+                //Hide move elem
+                mover.classList.toggle('hide')
+                
+                //AUDIO
+                sound.play(`drop-${rngNoRepeat(4)}`);
+                // audio.play(); 
+                // audio.volume = 0.5; // 0 to 1
+                // audio.loop = false;
+            }
         transform(args){
             if(args.mode === "all"){
                 //Change object props
@@ -304,3 +355,4 @@ class Card {
             this.htmlElem.classList.remove('selection')
         }
 }
+

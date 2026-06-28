@@ -143,8 +143,8 @@
 
         //Turn
         nextTurn(){
+            if(g.inputLock) return
 
-            
             //RESETS
             //Clear dice before card onMove fx.
             this.clearDice()
@@ -175,11 +175,7 @@
 
 
             //TRIGGER : turnStart : item effect that activate at the start of the turn
-            g.table.forEach(item => {
-                if(item.effectType.includes("turnStart")){   
-                    item.fx()
-                }
-            })
+            this.triggerTurnStartFx()
 
             this.turnCounter++
             this.updateUI()
@@ -189,7 +185,7 @@
         reveal(quant){
             if(this.pile.length >= quant){
                 for(let i = 0; i < quant; i++){
-                    rarr(this.pile).moveCard("table")
+                    q.add(() => rarr(this.pile).moveCard("table"))
                 }
             }
             //Moves remaining items
@@ -197,13 +193,15 @@
                 let remainingCards = this.pile.length
 
                 for(let i = 0; i < remainingCards; i++){                    
-                    rarr(this.pile).moveCard("table")
+                    q.add(() => 
+                        rarr(this.pile).moveCard("table")
+                    )
                 }
             } 
 
-
             //Pile hits 0 => Last turn
             if(this.pile.length === 0){
+                
                 el('turnBtn').setAttribute('onclick', 'g.gameOver()')
                 
                 el('turnBtn').innerHTML = `
@@ -212,7 +210,19 @@
                 `
 
                 el('turnBtn').classList.add("endRunBtn")
+
+                g.finalTurn = true
             }
+        }
+
+        triggerTurnStartFx(){
+             q.add(() =>
+                g.table.forEach(item => {
+                    if(item.effectType.includes("turnStart")){  
+                        item.fx()
+                    }
+                })
+            )   
         }
 
         //Clear dice
@@ -351,11 +361,6 @@
         }
     }
 
-    //Event listeners
-    //Return clicked elem via listener. 
-    //Has to be separate & named, can't remove arrow function listener
-    // function returnTarget(event){g.activeItem.fx(["target", event.target])}
-
 
 //START GAME
     let g //global game variable
@@ -365,6 +370,7 @@
         g = new Game
         
         //Generate all items
+        g.initialGen = true
         cardsRef.forEach(card =>{
             if(card.hide !== "y"){
                 g.cardsRef.push(card)
@@ -375,13 +381,16 @@
                     "location":"pile",
                     "effect": "effect",
                     "cost": "cost",
+                    "mode": "initial",
                 }) 
             }
         })
+        g.initialGen = false
 
         //Misc
         g.updateUI()
-        g.nextTurn()
+        runAnim(el("imgGirl"),`idle`)
+        // g.nextTurn()
 
         //Keyboard listener
         document.addEventListener('keydown', keyHandler);
@@ -389,46 +398,38 @@
     
     //KEYBOARD
     function keyHandler(event) {
-        if (event.code === 'Space') {
-            g.nextTurn();
+        if(g.inputLock) return
+
+        if(event.code === 'Space' && g.finalTurn){            
+            g.gameOver()
+        }
+        else if (event.code === 'Space') {
+            g.nextTurn()        
         } 
         else if (event.code === 'KeyB') {
-            toggleModal('bagModal');
+            toggleModal('bagModal')
         } 
         else if (event.code === 'KeyV') {
-            toggleModal('voidModal');
+            toggleModal('voidModal')
         }
     }
     function newKeyHandler(event) {
+        
         if (event.code === 'Space') {
             location.reload()
         } 
     }
 
     //Event queue
-    const actionQueue = new ActionQueue();
+    const q = new ActionQueue()
+    const pause = ms => new Promise(resolve => setTimeout(resolve, ms)) //allows to add pauses for animations
 
-    const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
-    
-    //async fucntion with delay
-    async function run() {
-        for (let i = 0; i < 4; i++) {
-            new Die
-            
-            await pause(500);
-        }
+    //AUDIO UNLOCK
+    const audio = new SoundManager()
+    function unlockAudio() {
+        window.removeEventListener("pointerdown", unlockAudio);
     }
-
-    //event queue
-    function queue(){
-        actionQueue.add(() => {
-            
-                // new Die
-                run()
-                console.log("event queue test")
-            
-        });
-    }
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
 
 
 //Fetch csv file, parse to JSON, assign it to ref obj

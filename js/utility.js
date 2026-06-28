@@ -26,6 +26,25 @@ function rarr(arr){//Random arr item
     return arr[Math.floor(Math.random() * arr.length)]
 }
 
+// RNG that does not return the same value twice
+let prev = null;
+function rngNoRepeat(max, min) {
+    if(min === undefined) {
+        min = 1
+    }
+    
+    if (max - min <= 0) return min;
+
+    let value;
+    do {
+        value = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (value === prev);
+
+    prev = value;
+    return value;
+    
+}
+
 function shuffle(array) {//Suffle arr
     let currentIndex = array.length,  randomIndex;
 

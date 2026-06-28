@@ -63,6 +63,11 @@
 
         min-height: 100vh;
         overflow-x: hidden;
+
+        /* Fix fonts aliasing */
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased; /* macOS */
+        -moz-osx-font-smoothing: grayscale;
     }
     .hide {
         display: none !important;
@@ -149,7 +154,7 @@
         justify-content: center;
 
         width: 960px;
-        height: 540px;
+        height: 600px;
 
         position: relative;
         overflow: hidden;
@@ -312,6 +317,8 @@
     .selection{
         z-index: 11 !important;
     }
+
+
 /* ANIMATION MANAGER */
     #mover{
         --screen-width: 960px;
@@ -325,7 +332,7 @@
 
         z-index: 10;
     }
-    .move-void {animation: move-void 0.5s linear}
+    .move-void {animation: move-void 500ms linear}
 
     @keyframes move-void {
         0% { transform: translate(0px, 0px); }
@@ -351,10 +358,12 @@
         ); }
     }
 
-    .move-table {animation: move-table 0.5s linear}
+    .move-table {animation: move-table 500ms linear}
 
     @keyframes move-table {
-        0% { transform: translate(0px, 0px); }
+        0% { 
+            transform: translate(0px, 0px);
+        }
 
         20% { transform: translate(
             calc(var(--screen-width)  * 0.1), 
@@ -376,6 +385,49 @@
             calc(var(--screen-width)  * 0.3), 
             calc(var(--screen-height) * 0.5) 
         ); }
+    }
+
+    /* Sprites */
+    #imgGirl{
+        background-size: 1488px 372px;
+        background-position: 0px;
+        background-repeat: no-repeat;
+
+        height: 372px;
+        width: 372px;
+
+        position: absolute;
+        top: -40px; 
+        left: -10px;
+    }
+
+    .throw{
+        background-image: url(../img/anim/demon-throw-744.png);
+        animation: throw 500ms steps(4) ;
+        /* animation: anim1 1s steps(4) infinite, bird-fly 48s steps(160) infinite ; */
+    }
+    .idle{
+        background-image: url(../img/anim/demon-idle-744.png);
+        animation: idle 1200ms steps(4) infinite alternate-reverse;
+        animation: idle 1200ms steps(4) infinite;
+        
+    }
+
+    @keyframes throw {
+        from {
+            background-position: 0px;
+        }
+        to {
+            background-position: -1488px;
+        }
+    }
+    @keyframes idle {
+        from {
+            background-position: 0px;
+        }
+        to {
+            background-position: -1488px;
+        }
     }
 
 
@@ -410,23 +462,25 @@
     }
   
     .card-data{
-        background-image: url(../img/ui-placeholders/effect-card.svg);
+        background-color: rgb(43, 46, 52);
+        border: 2px solid black;
+        border-radius: 6px;
 
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
 
-        box-shadow: 2px 8px 6px rgba(0, 0, 0, 0.375);
-
         height: calc(54px + 12px);
         width: var(--card-width);
         padding: 6px;
 
         z-index: 2;
+        position: relative;
       
         p{
             text-align: center;
+            font-weight: 600;
             font-size: 14px;
             line-height: 18px;
 
@@ -434,37 +488,77 @@
             width: 100%;
             
             overflow: hidden;
-            color: black;
+            color: #E6E9F5;
+
+            z-index: 3;
         }
 
     }
+    /* Die shadow image */
+    .card-data::after {
+
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 65px;
+        height: 31px;
+
+        background-image: url("../img/ui/effect-shadow-1.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .card-data::before {
+
+        content: "";
+        position: absolute;
+        top: -48px;
+        right: -2px;
+        width: 64px;
+        height: 53px;
+
+        background-image: url("../img/ui/effect-shadow-2.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    
     .props{
+        
+        height: 24px;
+        padding: 0px 8px;
+        background-color: black;
+        width: min-content;
+        z-index: 2;
 
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
 
-        padding: 0px 12px 4px 4px;
+        position: absolute;
+        left: 0;
+        bottom: 64px;
 
-        width: 100%;
-
-        z-index: 2;
-
+        box-shadow: 0px 2px 0px black;
+   
+        img{
+            padding-left: 2px;
+        }
         p{
-            height: 18px;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
             font-style: italic;
 
             width: max-content;
-            padding: 4px 2px 2px 5px;
-
             color: white;
-            text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.9);
         }
     }
     .itemImg{
         height: 168px;
-        width: 200px;
+        width: 180px;
         top:-6px;
 
         position: absolute;
@@ -498,8 +592,12 @@
     .card .cost{
         height: 32px;
         width: 32px;
-        bottom: 12px;
-        right: 12px;
+
+        position: absolute;
+        bottom: 64px;
+        right: 4px;
+
+        z-index: 3;
     }
 
     .shake{
