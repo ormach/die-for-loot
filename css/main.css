@@ -104,14 +104,8 @@
 
 /* BUTTON */
     button{
-        height: 56px;
 
-        min-width: 60px;
-        padding: 3px 16px 0px 16px;
-        border-radius: 8px;
-        
-        border: 2px solid var(--b20);
-        background-color: rgba(0, 0, 0, 0.443);
+        background-color: var(--w0);
 
         cursor: pointer;
 
@@ -119,32 +113,13 @@
         justify-content: center;
         align-items: center;
 
-        line-height: 100%;
-        z-index: 2;
+        z-index: 10;
     }
-        .endRunBtn{
-            background-color: rgb(232, 40, 117) !important ;
-            border: 2px solid var(--w50);
-        }
         #turnBtn{
             width: 120px;
             flex-direction: column; 
             gap: 4px;
         }
-    button img {
-        padding-bottom: 3px;
-    }
-    button:hover{
-        background-color: var(--b10);
-    }
-    button.light{
-        color: var(--font-color-light) !important;
-        border: 2px solid var(--w20);
-    }
-    button:disabled{
-        pointer-events: none;
-        opacity: 40%;
-    }
 
 
 /* BOARD & SCREENS */
@@ -256,12 +231,79 @@
         gap: 52px; 
         flex-direction: column;
         justify-content: space-between;
+        align-items: flex-end;
 
-        padding: 16px;
+        padding: 12px;
         flex-grow: 1;
 
         height: 100%;
     }
+        #turnBtn{
+            position: absolute;
+            top: 12px;
+            transform: translateX(-55px);
+            width: 96px;
+            height: 132px;
+
+            justify-content: flex-start;
+        }
+        .counter p{
+            font-weight: 600;
+            font-family: 'Grenze', sans-serif;
+            font-size: 24px;
+            color: white;
+            text-align: center;
+
+            width: 100%;
+        }
+        .pileIndicator{
+            width: 54px;
+            height: 72px;
+
+
+            position: absolute;
+            left: 12px;
+            top: 200px;
+
+            background-image: url(../img/ui/pile.svg);
+
+            padding-top: 6px;
+        }
+        #mute{
+            width: 52px;
+            height: 52px;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .audioOn{
+            background-image: url(../img/ui/audio-on.svg);
+        }
+        .audioOff{
+            background-image: url(../img/ui/audio-off.svg);
+        }
+        #voidBtn, #bagBtn{
+            height: 74px;
+            width: 100px;
+            
+            align-items: flex-start;
+            padding-top: 10px;
+        }
+        #voidBtn{
+            background-image: url(../img/ui/void.svg);
+            transform: translateY(96px);
+        }
+        #bagBtn{
+            background-image: url(../img/ui/bag.svg);
+        }
+        #howTo{
+            background-image: url(..//img/ui/info.svg);
+            height: 65px;
+            width: 48px;
+            transform: translateX(-248px);
+        }
     #table{
         flex-wrap: wrap;
         display: flex;
@@ -270,7 +312,7 @@
         align-items: center;
 
         width: calc((var(--card-width) + 20px) * 3);
-        height: calc((var(--card-height) + 20px) * 2);
+        height: calc((var(--card-height) + 8px) * 2);
     }
     #how{
         flex-direction: column;
@@ -283,7 +325,7 @@
 
     .decoration{
         position: absolute;
-        height: 560px;
+        height: 600px;
         z-index: -1;
     }
 
@@ -397,7 +439,7 @@
         width: 372px;
 
         position: absolute;
-        top: -40px; 
+        top: -0px; 
         left: -10px;
     }
 
@@ -408,8 +450,8 @@
     }
     .idle{
         background-image: url(../img/anim/demon-idle-744.png);
-        animation: idle 1200ms steps(4) infinite alternate-reverse;
-        animation: idle 1200ms steps(4) infinite;
+        /* animation: idle 1200ms steps(4) infinite alternate-reverse; */
+        animation: idle 8s steps(4) infinite;
         
     }
 

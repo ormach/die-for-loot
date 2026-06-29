@@ -62,12 +62,8 @@
         var data = ev.dataTransfer.getData("text/plain");
         let activeDie = el(data)
 
-        // console.log(`
-        //     Roll value: ${activeDie.dataset.rollvalue}  
-        //     Target element:( ${targetCard.id} | ${ev.target.dataset.cost} )
-        // `);
         
-        //Compare dice cost
+        //PAY: Compare dice cost
         if(activeDie.dataset.rollvalue == targetCard.dataset.cost){
             console.log('Cost paid');
 
@@ -82,8 +78,12 @@
 
             //Move card to bag
             cardObj.moveCard("bag")
+
+            playSFX('pay')
         }else{
             el("dice").appendChild(draggedElement)
+
+            playSFX('cantPay', "single")
         }
 
     }
@@ -129,15 +129,15 @@
         //Update html based on game state
         updateUI(){
             el(`voidBtn`).innerHTML = `
-                Void (${g.void.length})
+                <p>${g.void.length}</p>
             `
 
             el(`bagBtn`).innerHTML = `
-                Bag (${g.bag.length}/30)
+                <p>${g.bag.length}</p>
             `
 
             el(`pileBtn`).innerHTML = `
-                Pile (${g.pile.length})
+                <p>${g.pile.length}</p>
             `
         }
 
@@ -205,8 +205,7 @@
                 el('turnBtn').setAttribute('onclick', 'g.gameOver()')
                 
                 el('turnBtn').innerHTML = `
-                    End game 
-                    <span style="opacity: 0.5;">(space)</span>
+                    <img src="./img/ui/end-game.svg">
                 `
 
                 el('turnBtn').classList.add("endRunBtn")
@@ -389,7 +388,7 @@
 
         //Misc
         g.updateUI()
-        runAnim(el("imgGirl"),`idle`)
+        // runAnim(el("imgGirl"),`idle`)
         // g.nextTurn()
 
         //Keyboard listener
@@ -426,7 +425,9 @@
 
     //AUDIO UNLOCK
     const audio = new SoundManager()
+    // sfx works without this, but bg doesn't
     function unlockAudio() {
+        sound.playMusic(`bg-audio`);
         window.removeEventListener("pointerdown", unlockAudio);
     }
     window.addEventListener("pointerdown", unlockAudio, { once: true });

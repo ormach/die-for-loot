@@ -275,7 +275,9 @@ class Card {
                 
                 mover.classList = "" //Clear class list before animation switch
                 runAnim(mover,`move-${this.location}`)
-                runAnim(el("imgGirl"),`throw`)
+
+                // el('imgGirl').classList =""
+                // runAnim(el("imgGirl"),`throw`)
 
                 
                 //DELAY
@@ -286,9 +288,6 @@ class Card {
                 
                 //AUDIO
                 sound.play(`drop-${rngNoRepeat(4)}`);
-                // audio.play(); 
-                // audio.volume = 0.5; // 0 to 1
-                // audio.loop = false;
             }
         transform(args){
             if(args.mode === "all"){
@@ -348,6 +347,8 @@ class Card {
             //     this.htmlElem.childNodes[1].classList.remove("shake")
             // }
             this.updateHtml()
+
+            playSFX('item-fx', "single")
         }
         clearSelectionMode(){            
             //Animations

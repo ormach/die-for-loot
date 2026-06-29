@@ -30,7 +30,8 @@ class ActionQueue {
     g.inputLock = false
 
     //Set idle animations after queue.
-    runAnim(el("imgGirl"),`idle`)
+    // el('imgGirl').classList =""
+    // runAnim(el("imgGirl"),`idle`)
   }
 
 }

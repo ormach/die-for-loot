@@ -55,17 +55,18 @@
 
             <!-- Pile Dice -->
             <div class="leftSection">
-
-                <button id="turnBtn" onclick="g.nextTurn()">
-                    Next turn 
-                    <span style="opacity: 0.5;">(space)</span>
-                </button>
-
-                <p id="pileBtn"></p>
-                
-                <div id="pile" class="hide"></div>        
+                <button id="mute" class="audioOn"></button>
+       
+                <div id="pileBtn" class="pileIndicator counter"></div>        
+                <div id="pile" class="hide">
+                    
+                </div>        
                 <div id="dice"></div>
-            </div>                             
+            </div> 
+
+            <button id="turnBtn" onclick="g.nextTurn(), playSFX('btn')">
+                <img src="./img/ui/turn.svg" alt="">
+            </button>
             
 
             <!-- Cards -->
@@ -81,9 +82,9 @@
                 
             <!-- Right buttons -->
             <div class="rightSection">
-                <!-- <button id="howTo" onclick="toggleModal('how')">How to play</button> -->
-                <button id="voidBtn" onclick="toggleModal(`voidModal`)"></button>
-                <button id="bagBtn" onclick="toggleModal(`bagModal`)"></button>
+                <button id="howTo" onclick="toggleModal('how')"></button>
+                <button id="voidBtn" class="counter" onclick="toggleModal(`voidModal`)"></button>
+                <button id="bagBtn"  class="counter" onclick="toggleModal(`bagModal`)" ></button>
             </div>
 
 
@@ -155,14 +156,17 @@
             <img id="imgBg"   style="top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
             <img id="imgPile" style="top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
             
-            <div id="imgGirl" class=""></div>
-
-            <img id="imgTable" style="top: 0px; z-index: 1;" class="decoration" src="./img/ui-placeholders/table.png" alt="">
+            <!-- <div id="imgGirl" class=""></div> -->
+            <img id="" style="bottom: 0px; right: -0px;" class="decoration" src="./img/ui-placeholders/girl 2.png" alt="">
+            <img id="imgVoid" style="bottom: 12px; right: -0px;" class="decoration" src="./img/ui-placeholders/void.png" alt="">
+            <img id="imgTable" style="top: 0px; z-index: 0;" class="decoration" src="./img/ui-placeholders/table.png" alt="">
+            <img id="" style="bottom: 0px; right: -8px; z-index: 0;" class="decoration" src="./img/ui-placeholders/bell.png" alt="">
         
-            <img id="imgVoid" style="bottom: 0px; right: -20px;" class="decoration" src="./img/ui-placeholders/void.png" alt="">
-            <img id="imgBag" style="bottom: -40px; right: 0px;" class="decoration" src="./img/ui-placeholders/bag.png" alt="">
+            <img id="imgBag" style="bottom: 0px; right: 0px;" class="decoration" src="./img/ui-placeholders/bag.png" alt="">
             <img id="imgGob" style="bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/goblin.png" alt="">
 
+            <!-- UI -->
+            
 
         </div>
 
