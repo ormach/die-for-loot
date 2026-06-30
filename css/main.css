@@ -537,7 +537,7 @@
 
     }
     /* Die shadow image */
-    .card-data::after {
+    /* .card-data::after {
 
         content: "";
         position: absolute;
@@ -550,12 +550,12 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
-    }
+    } */
     .card-data::before {
 
         content: "";
         position: absolute;
-        top: -48px;
+        top: -53px;
         right: -2px;
         width: 64px;
         height: 53px;
@@ -631,13 +631,13 @@
         margin-top: 0;
         filter: drop-shadow(0px 0px 0px rgba(0,0,0,0.0));
     }
-    .card .cost{
+    .cost{
         height: 32px;
         width: 32px;
 
         position: absolute;
-        bottom: 64px;
-        right: 4px;
+        bottom: 66px;
+        right: 2px;
 
         z-index: 3;
     }
