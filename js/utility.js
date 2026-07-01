@@ -47,6 +47,9 @@ function rngNoRepeat(max, min) {
     
 }
 
+// INVERSE ARRAY: Use this when you remove items form array
+// for (let i = array.length - 1; i >= 0; i--) {}
+
 function shuffle(array) {//Suffle arr
     let currentIndex = array.length,  randomIndex;
 

@@ -1,10 +1,10 @@
 class Die {
     constructor(arg){
-
+        
         if(arg === undefined){
             this.setRollValue(rng(6,1))
         }else {
-            this.setRollValue(arg.value)
+            this.setRollValue(arg.value, undefined, arg.ignoreRounding)
         }
 
 
@@ -55,16 +55,18 @@ class Die {
         this.htmlElem.remove()
         removeFromArr(g.dice, this)
     }
-    setRollValue(val, bypassOnRollFx){
+    setRollValue(val, bypassOnRollFx, ignoreRounding){
 
         //Normalize rolls
-        if (val < 1) val = 1
-        if (val > 6) val = 6
+        if(ignoreRounding === undefined){
+            if (val < 1) val = 1
+            if (val > 6) val = 6
+        }
 
         this.value = val
 
 
-        //TRIGGER : onRoll : item effect when die roll value is set
+        //TRIGGER EFFECT : onRoll : item effect when die roll value is set
         if(bypassOnRollFx === undefined){
             g.table.forEach(item => {
                 if(item.effectType !== "onRoll") return

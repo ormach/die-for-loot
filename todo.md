@@ -1,15 +1,12 @@
 NO NEW FEATURES UNTIL RELEASE
 
+
 Bugs
-- Bingo now working after slots set 3 items to 6.
-- Crown retained wobble after sen’t back with catapult.
+- You can open 2 modal at once.
 - After returning slots with counter spell, they were placed on table with 0 uses.
-- Bingo and slots problem.
-- End game button not working, g.gameOver() undefined, something with catapult returning a catapult as the last item in pile.
-- Printer mega bad design
 - Not clear when crown activates, too random, rethink effect?
 - Got an extra turn while pile was at 0.
-- 0 items in pile => not last turn.
+
 
 Concepts
 - Some bonus effect when you clear 4-6 items per turn.

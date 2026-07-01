@@ -64,25 +64,21 @@
 
         
         //PAY: Compare dice cost
-        if(activeDie.dataset.rollvalue == targetCard.dataset.cost){
-            console.log('Cost paid');
-
-            //Replace with move
-            //Find card object by id
-            // console.log(targetCard.id);
-            
-            let cardObj = findByProperty(g.table, "itemId", targetCard.id)
-            
-            // cardObj.moveCard(targetCard, `bag`)
+        if(
+               activeDie.dataset.rollvalue > 6
+            && activeDie.dataset.rollvalue >= targetCard.dataset.cost 
+        ){
+            findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
             activeDie.remove()
-
-            //Move card to bag
-            cardObj.moveCard("bag")
-
+            new Die({value: activeDie.dataset.rollvalue - targetCard.dataset.cost, ignoreRounding: true}) //Return excess for gemdie
+            playSFX('pay')
+            }
+        else if(activeDie.dataset.rollvalue === targetCard.dataset.cost){
+            findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
+            activeDie.remove()
             playSFX('pay')
         }else{
             el("dice").appendChild(draggedElement)
-
             playSFX('cantPay', "single")
         }
 
@@ -115,10 +111,11 @@
             this.cards    = [] //Stores generated cards with html and extra props
             this.dice     = []
 
-            this.pile     = []
-            this.table    = []
-            this.void     = []
-            this.bag      = []
+            this.pile      = []
+            this.table     = []
+            this.void      = []
+            this.bag       = []
+            this.selection = []
 
             this.turnCounter = 0
             this.targets  = []
@@ -159,7 +156,7 @@
             })
             
 
-            //TRIGGER : turnEnd
+            //TRIGGER EFFECT : turnEnd
             g.table.forEach(item => {
                 if(item.effectType !== "turnEnd") return
                 item.fx()
@@ -174,7 +171,7 @@
             this.addMultipleDice(config.turnDice)
 
 
-            //TRIGGER : turnStart : item effect that activate at the start of the turn
+            //TRIGGER EFFECT : turnStart : item effect that activate at the start of the turn
             this.triggerTurnStartFx()
 
             this.turnCounter++
@@ -248,7 +245,7 @@
         }
 
         gameOver(){
-            if(this.pile.length < 1){
+            // if(this.pile.length < 1){
                 console.log("Game over");
 
                 //Calc score
@@ -300,7 +297,7 @@
                 toggleModal("gameOver")
 
                 return true
-            }            
+            // }            
         }
 
         //MODE manager
@@ -328,19 +325,35 @@
 
             // Item selection mode
             else if(args.location === "table"){
-                console.log("Enter mode");
                 
-                el('selectionShade').classList.remove('hide') //toggle shade
                 g.mode = args.location
-
+                g.activeItem = args.sourceItem //Store active item for reference in effect method
+                el('selectionShade').classList.remove('hide') //toggle shade
+                
                 g.table.forEach(item =>{
-                    //Remove event listener
+                    //Add shake
                     item.htmlElem.classList.add('selection', 'shake', 'clickable')
+                    // item.htmlElem.addEventListener("click", returnTarget) //Add event listener that stores clicked element
+                })
+                
+            }
+            // Void bag
+            else if(args.location === "void" || args.location === "bag"){
+                
+                g.mode = args.location
+                g.activeItem = args.sourceItem //Store active item for reference in effect method
+                el('selectionShade').classList.remove('hide') //toggle shade
+                
+                g[args.location].forEach(item =>{
+                    // item.moveCard('selection') //will trigger on move
+                    el('selectionContainer').appendChild(item.htmlElem)
 
-                    g.activeItem = args.sourceItem //Store active item for reference in effect method
+                    //Add shake
+                    item.htmlElem.classList.add('selection', 'shake', 'clickable')
                     // item.htmlElem.addEventListener("click", returnTarget) //Add event listener that stores clicked element
                 })
             }
+
 
             // Exits mode
             else if(args.mode !== undefined && args.mode === "exit"){
@@ -351,6 +364,15 @@
                 }
                 else if (g.mode === "table"){
                     g.table.forEach(item =>{item.clearSelectionMode()})
+                }
+                else if (g.mode === "void" || g.mode === "bag"){
+
+                    //Reverse iterate & return all items to back
+                    for (let i = g[g.mode].length - 1; i >= 0; i--) {                        
+                        g[g.mode][i].clearSelectionMode()
+                        g[g.mode][i].moveCard(g.mode, {bypass: true})
+                    }
+                    
                 }
 
                 g.mode = false
@@ -370,20 +392,44 @@
         
         //Generate all items
         g.initialGen = true
-        cardsRef.forEach(card =>{
-            if(card.hide !== "y"){
-                g.cardsRef.push(card)
+        //Setup config board
+        if(config.gameState !== undefined){
 
-                //Add card to pile
-                new Card({
-                    "name": card.name,
-                    "location":"pile",
-                    "effect": "effect",
-                    "cost": "cost",
-                    "mode": "initial",
-                }) 
+            cardsRef.forEach(card =>{
+                    g.cardsRef.push(card)
+            })
+
+            for (const [key, value] of Object.entries(config.gameState)) {  
+               value.forEach(name => {
+                   new Card({
+                       "name": name,
+                       "location":key,
+                       "effect": "effect",
+                       "cost": "cost",
+                       "mode": "initial",
+                   }) 
+               })
             }
-        })
+
+        }
+        //Setup game board
+        else {
+            cardsRef.forEach(card =>{
+    
+                if(card.hide !== "y"){
+                    g.cardsRef.push(card)
+    
+                    //Add card to pile
+                    new Card({
+                        "name": card.name,
+                        "location":"pile",
+                        "effect": "effect",
+                        "cost": "cost",
+                        "mode": "initial",
+                    }) 
+                }
+            })
+        }
         g.initialGen = false
 
         //Misc

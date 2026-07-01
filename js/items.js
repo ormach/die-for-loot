@@ -63,9 +63,8 @@ class Card {
         
 
         //Adds on click event for html elem
-        
         card.addEventListener("click", () => { //click => onclick event, not listener id
-            if(g.mode === "table"){
+            if(g.mode === 'table' || g.mode === 'void' || g.mode === 'bag'){
                 console.log(`Selected`);
                 
                 //Send selected item to item fx while in selection mode
@@ -217,7 +216,7 @@ class Card {
                         i = 6
                     }
 
-                    //Check if slot has a child element.
+                    //Check if slot has a child element.                    
                     if(el(`${i}`).childNodes.length == 0){
                         locationId = `${i}` //If slot is empty, set location
                         placed = true
@@ -230,20 +229,20 @@ class Card {
             //Move card obj to appropriate game array
             g[refCard.location].push(refCard)
             
-            if(!g.initialGen){
-                await this.animation()
-            }
+            //Animation & delay
+            if(!g.initialGen){await this.animation()}
 
             //Move HTML to table slot or containers
             el(locationId).append(refCard.htmlElem)
         
-            //TRIGGER : onMove : Check for movement fx
+            //TRIGGER EFFECT : onMove : Check for movement fx
             if(this.effectType.includes("onMove")){
                 if(args !== undefined) return //why
+                if(args !== undefined && args.bypass === true) return //for pig and bucket and exit mode
                 this.fx()
             }
 
-            //TRIGGER : onOtherMove : If item moves to void, check table for effects.
+            //TRIGGER EFFECT : onOtherMove : If item moves to void, check table for effects.
             if(this.location === "void" || this.location === "bag" || this.location === "table"){
                 g.table.forEach(item => {
 
@@ -269,7 +268,7 @@ class Card {
 
                 //Move animation 
                 let mover = el("mover")
-                mover.classList.toggle('hide')
+                mover.classList.remove('hide')
                 mover.setAttribute("src",`./img/items/id=${this.name}.png`)
                 // console.log(this.location);
                 
@@ -284,7 +283,7 @@ class Card {
                 await pause(config.aDelay); 
                 
                 //Hide move elem
-                mover.classList.toggle('hide')
+                mover.classList.add('hide')
                 
                 //AUDIO
                 sound.play(`drop-${rngNoRepeat(4)}`);
@@ -305,7 +304,12 @@ class Card {
                 this.fx = args.target.fx
             }
             else if(args.mode === "cost"){
-                this.cost = rng(6,1)
+                if(args.value === undefined){
+                    this.cost = rng(6,1)
+                }
+                else {
+                    this.cost = args.value
+                }
             }
 
             this.updateHtml()

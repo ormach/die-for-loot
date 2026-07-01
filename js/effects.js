@@ -1,6 +1,6 @@
 let itemEffectRef = {
     //On move (self)
-    piggy(){
+    pig(){
         if(!this.checkConditions({reqLocation: "bag"})) return
         new Die
     },
@@ -49,7 +49,9 @@ let itemEffectRef = {
     frog(arg){
         if(!this.checkConditions({reqLocation: "table"}) || arg === undefined) return
         
-        let val = arg.value + 1
+        
+        let val = arg.value * 1 + 1
+        console.log(val);
 
         arg.setRollValue(val, true)   
     },
@@ -100,6 +102,9 @@ let itemEffectRef = {
     sale(){
         if(!this.checkConditions({reqLocation: "table"})) return
 
+        console.log('sale');
+        
+
         g.table.forEach(item => {
             if(item.cost < 2) return
             item.cost --
@@ -121,8 +126,12 @@ let itemEffectRef = {
             tableCosts.push(item.cost)
         })
 
+        console.log(tableCosts);
         
+
         let targetCost = checkDuplicates(tableCosts, 3)
+        
+        console.log(targetCost);
         
         
         if(targetCost.length < 1) return
@@ -130,13 +139,17 @@ let itemEffectRef = {
         //For multiple movements, iterate backwards due to index shifts.
         let limitCounter = 3
         for(let i = g.table.length -1; i >= 0; i--){
-            // console.log(g.table[i].cost, targetCost[0]);
+            // console.log(
+            //     g.table[i].cost * 1 === targetCost[0] * 1,
+            //     g.table[i].cost, targetCost[0] * 1
+            // );
 
-            if(g.table[i].cost === targetCost[0] && limitCounter > 0){
+            if(g.table[i].cost * 1 === targetCost[0] * 1 && limitCounter > 0){
+                console.log('bingo');
+                
                 limitCounter--
                 g.table[i].moveCard("bag")
             }
-
         }
         
     },
@@ -184,6 +197,7 @@ let itemEffectRef = {
         if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
         g.selectionMode({location: "dice", sourceItem: this})
     },
+    //old duplication effect
     printer(arg){
 
         //Handles returned die
@@ -265,7 +279,7 @@ let itemEffectRef = {
         if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
         g.selectionMode({location: "dice", sourceItem: this})
     },
-    printer(arg){
+    camera(arg){
         
         //Select 1st die.
         if(arg !== undefined && arg[0] === "target"){
@@ -273,8 +287,14 @@ let itemEffectRef = {
             //Finds object by html id
             let target = findByProperty(g.dice, "dieId", arg[1].id)
 
-            target.clearSelectionMode()
-            g.targets.push(target)
+            let value = target.value
+
+            g.dice.forEach(die => {
+                die.setRollValue(value)
+            })
+
+            g.selectionMode({mode: 'exit'})
+            this.endEffect({uses: true})
         }
 
         //Select 2nd die.
@@ -319,6 +339,7 @@ let itemEffectRef = {
             let target = findByProperty(g.table, "itemId", arg[1].id)
             
             //Effect
+            target.clearSelectionMode()
             target.moveCard("pile")
 
             g.selectionMode({mode: 'exit'})
@@ -339,6 +360,7 @@ let itemEffectRef = {
             let target = findByProperty(g.table, "itemId", arg[1].id)
             
             //Effect
+            target.clearSelectionMode()
             target.moveCard("void")
             new Die
 
@@ -394,4 +416,67 @@ let itemEffectRef = {
 
         this.endEffect({uses: true})
     },
+    //Added "void" mode to items event listener for selection to work on void.
+    necronomicon(arg){
+        
+        if(arg !== undefined && arg[0] === "target" && g.mode !== false){
+
+            //Finds object by html id
+            let target = findByProperty(g.void, "itemId", arg[1].id)
+            
+            //Effect
+            target.clearSelectionMode()
+            target.moveCard('table')
+
+            g.selectionMode({mode: 'exit'})
+            this.endEffect({uses: true})
+        }
+
+        //Initiates selection mode
+        //"arg = "used" for multiple uses.
+        if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+        g.selectionMode({location: "void", sourceItem: this})
+    },
+    idol(arg){
+        
+        if(arg !== undefined && arg[0] === "target" && g.mode !== false){
+
+            //Finds object by html id
+            let target = findByProperty(g.bag, "itemId", arg[1].id)
+            
+            //Effect
+            target.clearSelectionMode()
+            q.add(() => this.moveCard('bag')) //move to bag 1st to free up space
+            q.add(() => target.moveCard('table'))
+
+            g.selectionMode({mode: 'exit'})
+            this.endEffect({uses: true})
+        }
+
+        //Initiates selection mode
+        //"arg = "used" for multiple uses.
+        if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+        g.selectionMode({location: "bag", sourceItem: this})
+    },
+    pliers(arg){
+        if(arg !== undefined && arg[0] === "target" && g.mode !== false){
+
+            //Finds object by html id
+            let target = findByProperty(g.table, "itemId", arg[1].id)
+            
+            //Effect
+            new Die({value:target.cost, ignoreRounding: true})
+            target.clearSelectionMode()
+            target.transform({mode:"cost", value: 1})
+
+            g.selectionMode({mode: 'exit'})
+            this.endEffect({uses: true})
+        }
+
+        //Initiates selection mode
+        //"arg = "used" for multiple uses.
+        if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
+        g.selectionMode({location: "table", sourceItem: this})
+    },
+    
 }
