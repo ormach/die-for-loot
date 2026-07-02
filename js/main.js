@@ -314,8 +314,9 @@
             // }            
         }
 
+        
         //MODE manager
-        selectionMode(args){
+        async selectionMode(args){
             //args = {
             //  location:"dice", 
             //  sourceItem: obj
@@ -339,18 +340,20 @@
 
             // Item selection mode
             else if(args.location === "table"){
-                g.table.forEach(item =>{
+                el('selectionShade').classList.remove('hide') //toggle shade
+  
+                
+                g.table.forEach( async item =>{
                     //Add shake
-                    item.htmlElem.classList.add('selection', 'shake', 'clickable')
+                    await item.htmlElem.classList.add('selection', 'shake', 'clickable')
                     // item.htmlElem.addEventListener("click", returnTarget) //Add event listener that stores clicked element
                 })
+                
                 
                 g.mode = args.location
                 g.activeItem = args.sourceItem //Store active item for reference in effect method
                 
-                el('selectionShade').classList.remove('hide') //toggle shade
-                // el('selectionShade').classList.toggle('transition') //toggle shade
-
+              
             }
             // Void bag
             else if(args.location === "void" || args.location === "bag"){
@@ -374,6 +377,9 @@
             else if(args.mode !== undefined && args.mode === "exit"){
                 el('selectionShade').classList.add('hide') //toggle shade
 
+                console.log(g.mode);
+                
+
                 if(g.mode === "dice"){
                     g.dice.forEach(die =>{die.clearSelectionMode()})
                 }
@@ -383,17 +389,20 @@
                 else if (g.mode === "void" || g.mode === "bag"){
 
                     //Reverse iterate & return all items to back
-                    for (let i = g[g.mode].length - 1; i >= 0; i--) {                        
-                        console.log(1);
-                        g[g.mode][i].clearSelectionMode()
-                        g[g.mode][i].moveCard(g.mode, {bypass: true})
-                        
-                    }
+                    q.add(() => {
+                        for (let i = g[g.mode].length - 1; i >= 0; i--) {                        
+                            g[g.mode][i].clearSelectionMode()
+                            g[g.mode][i].moveCard(g.mode, {bypass: true, animBypass: true}) 
+                            // console.log(g[g.mode][i], ": returned to : ", g.mode);                       
+                        }
+                    })
                     
                 }
 
-                g.mode = false
-                g.targets = []
+                 q.add(() => {
+                    g.mode = false
+                    g.targets = []
+                })
                                 
             }
         }

@@ -173,7 +173,8 @@ let itemEffectRef = {
             }
         }
 
-        new Alert(`BINGO!.`)
+        new Alert(`BINGO!!! 3 items were moved to bag.`, this.name)
+
     },
 
     //onClick
@@ -362,7 +363,7 @@ let itemEffectRef = {
             
             //Effect
             target.clearSelectionMode()
-            target.moveCard("pile")
+            q.add(() =>target.moveCard("pile"))
 
             g.selectionMode({mode: 'exit'})
             this.endEffect({uses: true})
@@ -448,7 +449,7 @@ let itemEffectRef = {
             
             //Effect
             target.clearSelectionMode()
-            target.moveCard('table')
+            q.add(() => target.moveCard('table'))
 
             g.selectionMode({mode: 'exit'})
             this.endEffect({uses: true})

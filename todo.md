@@ -7,6 +7,7 @@ NO NEW FEATURES UNTIL RELEASE
 Design issues
 
 Bugs
+- Nomiopen => moves items to selection div, nomi close without effect, items stay in selection div.
 - You can open 2 modal at once.
 - Not clear when crown activates, too random, rethink effect?
 - Got an extra turn while pile was at 0.

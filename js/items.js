@@ -65,14 +65,12 @@ class Card {
 
         //Adds on click event for html elem
         card.addEventListener("click", () => { //click => onclick event, not listener id
+            //Send selected item to item fx while in selection mode
             if(g.mode === 'table' || g.mode === 'void' || g.mode === 'bag'){
-                console.log(`Selected`);
-                
-                //Send selected item to item fx while in selection mode
                 g.activeItem.fx(["target", event.target])
             }
+            //Trigger item effect
             else if (this.effectType === "onClick") {
-
                 this.fx("used")  
             }
         })
@@ -193,13 +191,12 @@ class Card {
 
         async moveCard(locationId, args){
             //args — for onMove effects            
-
             this. previousLocation = this.location
             let refCard = this //Store card obj to delete the initial one
-            
             removeFromArr(g[this.location], this) //Remove initial card obj
             refCard.location = locationId //Store location, it changes below
             
+
             //Find empty table slot or void              
             if(locationId === "table"){
 
@@ -227,27 +224,24 @@ class Card {
                 }
             }
 
+
             //Move card obj to appropriate game array
             g[refCard.location].push(refCard)
             
+
             //Animation & delay
-            if(
-                !g.initialGen
-            ){
-                if(args !== undefined && args.bypass) return
-                
-                // console.log(args);
-                await this.animation()
-            }
+            if(!g.initialGen || args?.animBypass){await this.animation()}
             
             
-            
-            //Move HTML to table slot or containers
+            //Move HTML
             el(locationId).append(refCard.htmlElem)
+            // console.log(this.name, ": moved to :", locationId);
+            
             
             //Reset flags on move (uses)
             refCard.setFlags() 
             refCard.updateHtml()
+
 
             //Clear interactive elements
             if(this.location === "void" || this.location === "bag"){
@@ -255,13 +249,13 @@ class Card {
                 this.htmlElem.childNodes[1].classList.remove("shake")
             }
         
+
             //TRIGGER EFFECT : onMove : Check for movement fx
             if(this.effectType.includes("onMove")){
                 if(args !== undefined) return //why
                 if(args !== undefined && args.bypass === true) return //for pig and bucket and exit mode
                 this.fx()
             }
-
             //TRIGGER EFFECT : onOtherMove : If item moves to void, check table for effects.
             if(this.location === "void" || this.location === "bag" || this.location === "table"){
                 g.table.forEach(item => {
@@ -284,7 +278,7 @@ class Card {
                 })
             }
 
-            g.updateUI()
+            g.updateUI() // updates counter
         }
             async animation(){
 
@@ -295,7 +289,7 @@ class Card {
                 
                 mover.classList = "" //Clear class list before animation switch
                 runAnim(mover,`move-${this.previousLocation}-${this.location}`)
-                console.log(`${this.name} : Anim run: move-${this.previousLocation}-${this.location}`);
+                // console.log(`${this.name} : Anim run: move-${this.previousLocation}-${this.location}`);
                 
 
                 // el('imgGirl').classList =""
@@ -378,6 +372,9 @@ class Card {
             //Animations
             this.htmlElem.classList.remove('shake')
             this.htmlElem.classList.remove('selection')
+
+            console.log(this.name, 'Cleared selection mode');
+            
         }
 }
 
