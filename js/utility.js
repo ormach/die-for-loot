@@ -261,12 +261,35 @@ function findReplace(obj, oldVal, newVal){
 
 //Alert/Notification
 let alertTimer
-function showAlert(note){
-    el('alert-note').innerHTML = note
-    el('alert').classList.remove('hide')
+class Alert{
+    constructor(note, image){
 
-    clearTimeout(alertTimer)
-    alertTimer = setTimeout(() => {el('alert').classList.add('hide')}, 5000)
+        let alert = document.createElement('div')
+        alert.classList.add('alert')
+        alert.onclick = () => alert.remove();
+
+        let img = ""
+
+        if(image !== undefined){
+            img = `<img src="./img/items/id=${image}.png" alt="">`
+        }
+        alert.innerHTML = `
+                ${img}  
+                <p id="alert-note">${note}</p>
+        `
+
+        el('alert-container').append(alert)
+
+        this.htmlElem = alert
+
+        this.delete()
+        
+    }
+    delete(){
+        this.timer = setTimeout(() => {
+            this.htmlElem.remove();
+        }, 7000);
+    }
 }
 
 

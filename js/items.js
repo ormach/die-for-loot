@@ -15,6 +15,7 @@ class Card {
         this.effectType = this.cardRefObj.effectType
         this.type   = this.cardRefObj.type
         this.cost   = this.cardRefObj.cost 
+        this.brick  = this.cardRefObj.brick
 
         this.setFlags()
 
@@ -193,12 +194,12 @@ class Card {
         async moveCard(locationId, args){
             //args — for onMove effects            
 
-            
+            this. previousLocation = this.location
             let refCard = this //Store card obj to delete the initial one
-
+            
             removeFromArr(g[this.location], this) //Remove initial card obj
             refCard.location = locationId //Store location, it changes below
-
+            
             //Find empty table slot or void              
             if(locationId === "table"){
 
@@ -230,10 +231,29 @@ class Card {
             g[refCard.location].push(refCard)
             
             //Animation & delay
-            if(!g.initialGen){await this.animation()}
-
+            if(
+                !g.initialGen
+            ){
+                if(args !== undefined && args.bypass) return
+                
+                // console.log(args);
+                await this.animation()
+            }
+            
+            
+            
             //Move HTML to table slot or containers
             el(locationId).append(refCard.htmlElem)
+            
+            //Reset flags on move (uses)
+            refCard.setFlags() 
+            refCard.updateHtml()
+
+            //Clear interactive elements
+            if(this.location === "void" || this.location === "bag"){
+                this.htmlElem.classList.remove('clickable')
+                this.htmlElem.childNodes[1].classList.remove("shake")
+            }
         
             //TRIGGER EFFECT : onMove : Check for movement fx
             if(this.effectType.includes("onMove")){
@@ -246,13 +266,15 @@ class Card {
             if(this.location === "void" || this.location === "bag" || this.location === "table"){
                 g.table.forEach(item => {
 
+                    if(args !== undefined && args.bypass === true) return //prevents binder trigger from idle preview
+
                     if(item.effectType === "onOtherMove"){
 
                         item.fx(this)
                     }
 
-                    //Needed for ball to reduce uses
-                    else if(item.name === "ball" && this.location === "void"){
+                    //Needed for lantern to reduce uses
+                    else if(item.name === "lantern" && this.location === "void"){
                         
                         item.flags.uses--
                         if(item.flags.uses < 0){item.flags.uses = 0} 
@@ -270,10 +292,11 @@ class Card {
                 let mover = el("mover")
                 mover.classList.remove('hide')
                 mover.setAttribute("src",`./img/items/id=${this.name}.png`)
-                // console.log(this.location);
                 
                 mover.classList = "" //Clear class list before animation switch
-                runAnim(mover,`move-${this.location}`)
+                runAnim(mover,`move-${this.previousLocation}-${this.location}`)
+                console.log(`${this.name} : Anim run: move-${this.previousLocation}-${this.location}`);
+                
 
                 // el('imgGirl').classList =""
                 // runAnim(el("imgGirl"),`throw`)
@@ -347,9 +370,6 @@ class Card {
             //Resets target storage 
             g.targets = []
 
-            // if(this.flags.uses === 0){
-            //     this.htmlElem.childNodes[1].classList.remove("shake")
-            // }
             this.updateHtml()
 
             playSFX('item-fx', "single")

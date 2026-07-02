@@ -7,16 +7,16 @@ let config = {
     //Game settings
         turnDice: 2,
         itemsPerTurn: 4,
-        aDelay: 200,
+        aDelay: 400,
 
     //Item flags
         flags: {},
 
     //Testing
-        // gameState: {
-        //     table: [, 'saw', 'necronomicon', 'mirror', 'bingo'],
-        //     void:  ['rarm', 'acid'],
-        //     bag:   ['pig'],
-        //     pile:  ['bingo', 'acid', ],
-        // }
+        gameState: {
+            table: ['idol','necronomicon','binder', 'acid', 'acid'],
+            void:  ['acid',],
+            bag:   ['acid',],
+            pile:  ['rune','necronomicon','crown'],
+        }
 }

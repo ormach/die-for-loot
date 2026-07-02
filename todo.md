@@ -1,11 +1,18 @@
 NO NEW FEATURES UNTIL RELEASE
++ Button transitions main.
++ Clear shake on non table active items.
+- Notification stacking
 
+
+Design issues
 
 Bugs
 - You can open 2 modal at once.
-- After returning slots with counter spell, they were placed on table with 0 uses.
 - Not clear when crown activates, too random, rethink effect?
 - Got an extra turn while pile was at 0.
+- hammer failed activation, - cata failed to activate.
+- If 2 frogs, pliers + crown combo does not work.
+- Gemdice + frog is not working.
 
 
 Concepts

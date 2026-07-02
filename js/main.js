@@ -164,6 +164,7 @@
     
 
             //REVEAL 4 ITEMS
+          
             this.reveal(this.itemsPerTurn)
             
 
@@ -180,9 +181,11 @@
 
         //Moves item from pile to table, if no space voids it.
         reveal(quant){
+
             if(this.pile.length >= quant){
+                
                 for(let i = 0; i < quant; i++){
-                    q.add(() => rarr(this.pile).moveCard("table"))
+                    q.add(() => this.dropManager().moveCard("table"))
                 }
             }
             //Moves remaining items
@@ -190,9 +193,7 @@
                 let remainingCards = this.pile.length
 
                 for(let i = 0; i < remainingCards; i++){                    
-                    q.add(() => 
-                        rarr(this.pile).moveCard("table")
-                    )
+                    q.add(() => this.dropManager().moveCard("table"))
                 }
             } 
 
@@ -208,6 +209,19 @@
                 el('turnBtn').classList.add("endRunBtn")
 
                 g.finalTurn = true
+            }
+        }
+
+        dropManager(){
+            let bricks = findByProperty(this.table, "brick", "y", 'includes').length
+           
+
+            if(bricks > 3 && findByProperty(this.pile, "brick", "n", 'includes').length > 0){
+                let items = findByProperty(this.pile, "brick", "n", 'includes')
+                return rarr(items)
+            }
+            else {
+                return rarr(this.pile)
             }
         }
 
@@ -325,17 +339,18 @@
 
             // Item selection mode
             else if(args.location === "table"){
-                
-                g.mode = args.location
-                g.activeItem = args.sourceItem //Store active item for reference in effect method
-                el('selectionShade').classList.remove('hide') //toggle shade
-                
                 g.table.forEach(item =>{
                     //Add shake
                     item.htmlElem.classList.add('selection', 'shake', 'clickable')
                     // item.htmlElem.addEventListener("click", returnTarget) //Add event listener that stores clicked element
                 })
                 
+                g.mode = args.location
+                g.activeItem = args.sourceItem //Store active item for reference in effect method
+                
+                el('selectionShade').classList.remove('hide') //toggle shade
+                // el('selectionShade').classList.toggle('transition') //toggle shade
+
             }
             // Void bag
             else if(args.location === "void" || args.location === "bag"){
@@ -369,8 +384,10 @@
 
                     //Reverse iterate & return all items to back
                     for (let i = g[g.mode].length - 1; i >= 0; i--) {                        
+                        console.log(1);
                         g[g.mode][i].clearSelectionMode()
                         g[g.mode][i].moveCard(g.mode, {bypass: true})
+                        
                     }
                     
                 }

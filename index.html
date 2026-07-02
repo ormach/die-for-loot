@@ -55,7 +55,7 @@
 
             <!-- Pile Dice -->
             <div class="leftSection">
-                <button id="mute" class="audioOn"></button>
+                <button id="mute" class="audioOn states"></button>
        
                 <div id="pileBtn" class="pileIndicator counter"></div>        
                 <div id="pile" class="hide">
@@ -64,7 +64,7 @@
                 <div id="dice"></div>
             </div> 
 
-            <button id="turnBtn" onclick="g.nextTurn(), playSFX('btn')">
+            <button id="turnBtn" class="states" onclick="g.nextTurn(), playSFX('btn')">
                 <img src="./img/ui/turn.svg" alt="">
             </button>
             
@@ -82,9 +82,9 @@
                 
             <!-- Right buttons -->
             <div class="rightSection">
-                <button id="howTo" onclick="toggleModal('how')"></button>
-                <button id="voidBtn" class="counter" onclick="toggleModal(`voidModal`)"></button>
-                <button id="bagBtn"  class="counter" onclick="toggleModal(`bagModal`)" ></button>
+                <button id="howTo"   class="states" onclick="toggleModal('how')"></button>
+                <button id="voidBtn" class="counter states" onclick="toggleModal(`voidModal`)"></button>
+                <button id="bagBtn"  class="counter states" onclick="toggleModal(`bagModal`)" ></button>
             </div>
 
 
@@ -118,26 +118,32 @@
                 </div>
 
                 <div class="contentArea">
-                    <h2>Game elements</h2>
-                        <ul>
-                            <li>Gemdice - Used as a currency to pay for items. drag and drop it on item to buy it.</li>
-                            <li>Pile</li>
-                            <li>Table</li>
-                            <li>Items</li>
-                            <li>Void</li>
-                            <li>Bag</li>
-                        </ul>
-    
-                    <h2>How to win</h2>
-                       <p>But 30 or more items.</p>
-    
-                    <h2>Game flow</h2>
-                        <ul>
-                            <li>Each turn 4 items will be placed on board and you will get 2 gemdice.</li>
-                            <li>Pay dice for items, use item effect to modify stuff.</li>
-                            <li>When you run out of things to do, start the next turn.</li>
-                            <li>Game end when you run out of items in pile.</li>
-                        </ul>
+        
+                    <ul style="list-style:disc">
+                        <li>Each turn 4 items will be placed on table, and you will get 2 dice.</li>
+                        <li>Dra and drop dice on items with matching cost to buy them.</li>
+                        <li>Click on items to use their effects to modify stuff.</li>
+                        <li>When you run out of things to do, start the next turn.</li>
+                        <br>
+                        <li>Game ends when you run out of items in pile.</li>
+                        <li>Win by having 24 items in the bag at the end of the game.</li>
+                    </ul>
+
+                    <div style="display: flex; gap: 12px;">
+                        <img src="./img/ui/table preview.png" style="width: 440px; height: 280px;">
+                        <img src="./img/ui/item preview.png" style="width: 180px; height: 168px;">
+                    </div>
+
+                    <ul style="list-style:disc">
+                        <li>Items — Game elements that you buy with dice. Can have passive or active effects.</li>
+                        <li>Dice — Used as a currency to pay for items. drag and drop it on an item to buy it.</li>
+                        <br>
+                        <li>Pile — Contains all items at the start of the game.</li>
+                        <li>Table — Has 6 item slots, contains items available for purchase. If table has no space, item that would be moved to table is moved to Void instead.</li>
+                        <li>Void — Area where items go if you fail to buy things fast enough.</li>
+                        <li>Bag — Area where you store purchased items.</li>
+                    </ul>
+
                 </div>
 
                 
@@ -147,7 +153,6 @@
                 <div id="selectionContainer"></div>
                 <button onclick="g.selectionMode({mode:'exit'})">
                     Cancel & go back
-                    <img src="./img/ico/id=arrow-r.svg">
                 </button>
             </div>
 
@@ -166,17 +171,12 @@
             <img id="imgBag" style="bottom: 0px; right: 0px;" class="decoration" src="./img/ui-placeholders/bag.png" alt="">
             <img id="imgGob" style="bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/goblin.png" alt="">
 
-            <!-- UI -->
-            
 
+            <!-- ALERT -->
+            <div id="alert-container"></div>
         </div>
 
         
-    <!-- ALERT -->
-        <div id="alert" class="hide" onclick="this.classList.add('hide')">
-            <p id="alert-note">Message.</p>
-            <img src="./img/ico/item-x.svg" alt="">
-        </div>
 
     </body>
 

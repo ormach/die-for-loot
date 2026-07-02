@@ -56,6 +56,7 @@ class Die {
         removeFromArr(g.dice, this)
     }
     setRollValue(val, bypassOnRollFx, ignoreRounding){
+        if (val > 8) val = 8 //Frog + crown + pliers combo 
 
         //Normalize rolls
         if(ignoreRounding === undefined){
