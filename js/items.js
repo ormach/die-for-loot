@@ -120,7 +120,7 @@ class Card {
                     ${uses}
                 </div>
 
-                <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
+                <img class="cost" src="./img/die/id=${this.cost}.png"></img>
 
                 ${description}
         `
@@ -183,7 +183,7 @@ class Card {
                         ${uses}
                     </div>
 
-                    <img class="cost" src="./img/die/id=${this.cost}.svg"></img>
+                    <img class="cost" src="./img/die/id=${this.cost}.png"></img>
 
                     ${description}
             `

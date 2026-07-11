@@ -917,14 +917,14 @@
 
         z-index: 3;
     }
-        .die1{background-image: url("../img/die/id=1.svg");}
-        .die2{background-image: url("../img/die/id=2.svg");}
-        .die3{background-image: url("../img/die/id=3.svg");}
-        .die4{background-image: url("../img/die/id=4.svg");}
-        .die5{background-image: url("../img/die/id=5.svg");}
-        .die6{background-image: url("../img/die/id=6.svg");}
-        .die7{background-image: url("../img/die/id=7.svg");}
-        .die8{background-image: url("../img/die/id=8.svg");}
+        .die1{background-image: url("../img/die/id=1.png");}
+        .die2{background-image: url("../img/die/id=2.png");}
+        .die3{background-image: url("../img/die/id=3.png");}
+        .die4{background-image: url("../img/die/id=4.png");}
+        .die5{background-image: url("../img/die/id=5.png");}
+        .die6{background-image: url("../img/die/id=6.png");}
+        .die7{background-image: url("../img/die/id=7.png");}
+        .die8{background-image: url("../img/die/id=8.png");}
 
 
     .spin {animation: spin 1s cubic-bezier(0, 0, 0.05, 1);}
