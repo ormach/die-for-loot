@@ -164,7 +164,6 @@
     
 
             //REVEAL 4 ITEMS
-          
             this.reveal(this.itemsPerTurn)
             
 
@@ -177,6 +176,11 @@
 
             this.turnCounter++
             this.updateUI()
+
+            if(this.turnCounter === 1){
+                runAnim(el('turnBtn'), 'fade')
+                el('turnBtn').innerHTML = `<img src="./img/ui/turn.svg" alt="">`
+            }
         }
 
         //Moves item from pile to table, if no space voids it.

@@ -52,7 +52,6 @@
 
         <div class="wrapper">
 
-
             <!-- Pile Dice -->
             <div class="leftSection">
                 <button id="mute" class="audioOn states"></button>
@@ -63,12 +62,10 @@
                 </div>        
                 <div id="dice"></div>
             </div> 
-
+            <!-- Turn -->
             <button id="turnBtn" class="states" onclick="g.nextTurn(), playSFX('btn')">
-                <img src="./img/ui/turn.svg" alt="">
+                <img src="./img/ui/start-game.svg" alt="">
             </button>
-            
-
             <!-- Cards -->
             <div id="table" class="">
                 <div id="1" class="card-container"></div>
@@ -88,28 +85,37 @@
             </div>
 
 
-            <!-- Modals -->
+            <!-- MODALS -->
             <!-- Void -->
             <div id="voidModal" class="modal hide">
-                <div class="modalHeader">
-                    <h1>Void</h1>
-                    <button onclick="toggleModal(`voidModal`)">Hide</button>
-                </div>
+                <button class="modalCloseBtn" onclick="toggleModal(`voidModal`)">
+                    <img src="./img/ui/id=close.svg"></img>
+                </button>
+                
                 <div id="void" class="contentArea"></div>
+                
+                <img src="./img/ui/void-modal-top.png" alt="" style="pointer-events: none; z-index: 103; position: absolute; height: 600px;">
+                <img src="./img/ui/void-modal.jpg" alt="" style="position: absolute;height: 600px;">
             </div>
 
             <!-- Bag -->
-            <div id="bagModal" class="modal hide"> 
-                <div class="modalHeader">
-                    <h1>Bag</h1>
-                    <button onclick="toggleModal(`bagModal`)">Hide</button>
-                </div>
+            <div id="bagModal" class="modal hide">   
+                <button class="modalCloseBtn" onclick="toggleModal(`bagModal`)">
+                    <img src="./img/ui/id=close.svg"></img>
+                </button>
+                
                 <div id="bag" class="contentArea"></div>
+
+                <img src="./img/ui/bag-modal-top.png" alt="" style="pointer-events: none; z-index: 103; position: absolute; height: 600px;">
+                <img src="./img/ui/bag-modal.jpg" alt="" style="position: absolute;height: 600px;">
+
             </div>
 
+            <!-- Game over -->
             <div id="gameOver" class="modal hide">      
             </div>
 
+            <!-- Help -->
             <div id="how" class="modal hide">
 
                 <div class="modalHeader">
@@ -149,6 +155,7 @@
                 
             </div>
 
+            <!-- Selection -->
             <div id="selectionShade" class="hide">
                 <div id="selectionContainer"></div>
                 <button onclick="g.selectionMode({mode:'exit'})">
@@ -162,7 +169,6 @@
             <img id="imgBg"   style="top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
             <img id="imgPile" style="top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
             
-            <!-- <div id="imgGirl" class=""></div> -->
             <img id="" style="bottom: 0px; right: -0px;" class="decoration" src="./img/ui-placeholders/girl 2.png" alt="">
             <img id="imgVoid" style="bottom: 12px; right: -0px;" class="decoration" src="./img/ui-placeholders/void.png" alt="">
             <img id="imgTable" style="top: 0px; z-index: 0;" class="decoration" src="./img/ui-placeholders/table.png" alt="">
