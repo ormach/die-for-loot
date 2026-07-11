@@ -30,7 +30,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <!-- Mono -->
-        <!-- <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet"> -->
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 
         <!-- Grenze -->
         <link href="https://fonts.googleapis.com/css2?family=Grenze:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@
             </div> 
             <!-- Turn -->
             <button id="turnBtn" class="states" onclick="g.nextTurn(), playSFX('btn')">
-                <img src="./img/ui/start-game.svg" alt="">
+                <img src="./img/ui/start-game.png" alt="">
             </button>
             <!-- Cards -->
             <div id="table" class="">
@@ -89,7 +89,7 @@
             <!-- Void -->
             <div id="voidModal" class="modal hide">
                 <button class="modalCloseBtn" onclick="toggleModal(`voidModal`)">
-                    <img src="./img/ui/id=close.svg"></img>
+                    <img src="./img/ui/id=close.png"></img>
                 </button>
                 
                 <div id="void" class="contentArea"></div>
@@ -101,7 +101,7 @@
             <!-- Bag -->
             <div id="bagModal" class="modal hide">   
                 <button class="modalCloseBtn" onclick="toggleModal(`bagModal`)">
-                    <img src="./img/ui/id=close.svg"></img>
+                    <img src="./img/ui/id=close.png"></img>
                 </button>
                 
                 <div id="bag" class="contentArea"></div>
@@ -112,47 +112,45 @@
             </div>
 
             <!-- Game over -->
-            <div id="gameOver" class="modal hide">      
+            <div id="gameOver" class="modal hide">  
+                <p id="runType">Gold</p>
+
+                <div class="score">
+                    <p id="scoreInBag">22</p>
+                    <p id="totalItems">32</p>
+                </div>
+                
+                <div class="targets">
+                    <p id="targetGold">20</p>
+                    <p id="targetSilver">20</p>
+                    <p id="targetBronze">28</p>
+                </div>
+                
+                <div class="stats">
+                    <p id="statBag">28</p>
+                    <p id="statVoid">28</p>
+                    <p id="statTable">28</p>
+                    <p id="statTurns">28</p>
+                </div>
+
+                <button id="againBtn" onclick="location.reload()">
+                    <img src="./img/ui/end-btn.png" style="width: 228px;">
+                </button>
+                
+                <img src="./img/ui/end-premade.jpg" alt="" style="z-index: -1; position: absolute;height: 600px;">
             </div>
 
             <!-- Help -->
             <div id="how" class="modal hide">
 
-                <div class="modalHeader">
-                    <h1>How to play</h1>
-                    <button onclick="toggleModal(`how`)">Hide</button>
-                </div>
-
-                <div class="contentArea">
-        
-                    <ul style="list-style:disc">
-                        <li>Each turn 4 items will be placed on table, and you will get 2 dice.</li>
-                        <li>Dra and drop dice on items with matching cost to buy them.</li>
-                        <li>Click on items to use their effects to modify stuff.</li>
-                        <li>When you run out of things to do, start the next turn.</li>
-                        <br>
-                        <li>Game ends when you run out of items in pile.</li>
-                        <li>Win by having 24 items in the bag at the end of the game.</li>
-                    </ul>
-
-                    <div style="display: flex; gap: 12px;">
-                        <img src="./img/ui/table preview.png" style="width: 440px; height: 280px;">
-                        <img src="./img/ui/item preview.png" style="width: 180px; height: 168px;">
-                    </div>
-
-                    <ul style="list-style:disc">
-                        <li>Items — Game elements that you buy with dice. Can have passive or active effects.</li>
-                        <li>Dice — Used as a currency to pay for items. drag and drop it on an item to buy it.</li>
-                        <br>
-                        <li>Pile — Contains all items at the start of the game.</li>
-                        <li>Table — Has 6 item slots, contains items available for purchase. If table has no space, item that would be moved to table is moved to Void instead.</li>
-                        <li>Void — Area where items go if you fail to buy things fast enough.</li>
-                        <li>Bag — Area where you store purchased items.</li>
-                    </ul>
-
-                </div>
-
+                <button class="modalCloseBtn" onclick="toggleModal(`how`)">
+                    <img src="./img/ui/id=close.png"></img>
+                </button>
                 
+                <!-- <div id="bag" class="contentArea"></div> -->
+
+                <img src="./img/ui/how-premade.jpg" alt="" style="position: absolute;height: 600px;">
+ 
             </div>
 
             <!-- Selection -->

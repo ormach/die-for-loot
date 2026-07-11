@@ -13,10 +13,10 @@ let config = {
         flags: {},
 
     //Testing
-        gameState: {
-            table: ['pliers','necronomicon', 'catapult'],
-            void:  ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
-            bag:   ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
-            pile:  ['glue','saw','frog'],
-        }
+        // gameState: {
+        //     table: ['pliers','necronomicon', 'catapult'],
+        //     void:  ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
+        //     bag:   ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
+        //     pile:  ['glue','saw','frog'],
+        // }
 }

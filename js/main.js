@@ -179,7 +179,7 @@
 
             if(this.turnCounter === 1){
                 runAnim(el('turnBtn'), 'fade')
-                el('turnBtn').innerHTML = `<img src="./img/ui/turn.svg" alt="">`
+                el('turnBtn').innerHTML = `<img src="./img/ui/turn.png" alt="">`
             }
         }
 
@@ -207,7 +207,7 @@
                 el('turnBtn').setAttribute('onclick', 'g.gameOver()')
                 
                 el('turnBtn').innerHTML = `
-                    <img src="./img/ui/end-game.svg">
+                    <img src="./img/ui/end-game.png">
                 `
 
                 el('turnBtn').classList.add("endRunBtn")
@@ -270,42 +270,36 @@
     
                 let runOutcome 
                 let total = g.cardsRef.length
-                let diamond = Math.floor(total * 0.90)
-                let golden = Math.floor(total * 0.80)
-                let silver = Math.floor(total * 0.70)
+                let gold = Math.floor(total * 0.90)
+                let silver = Math.floor(total * 0.80)
+                let bronze = Math.floor(total * 0.65)
 
-                if(g.bag.length >= diamond){
-                    runOutcome = "Diamond"
-                }
-                else if (g.bag.length >= golden){
-                    runOutcome = "Golden"
+                if(g.bag.length >= gold){
+                    runOutcome = "Gold"
                 }
                 else if (g.bag.length >= silver){
                     runOutcome = "Silver"
+                }
+                else if (g.bag.length >= bronze){
+                    runOutcome = "Bronze"
                 }
                 else{
                     runOutcome = "Failed"
                 }
 
-                el('gameOver').innerHTML = `
-                    <h1 id="endTitle">
-                        Game over.<br>
-                        You had a <span style="color:white;">${runOutcome}</span> run.
-                    </h1>
+                el('runType').innerHTML = runOutcome
 
-                    <p id="score">
-                        Items in bag: ${g.bag.length} <br>
-                        Items in void: ${g.void.length} <br>
-                        Turns: ${g.turnCounter}<br><br>
+                el('targetGold').innerHTML = gold
+                el('targetSilver').innerHTML = silver
+                el('targetBronze').innerHTML = bronze
 
-                        Total items: ${total}<br>
-                        Diamond run: ${diamond}<br>
-                        Golden run: ${golden}<br>
-                        Silver run: ${silver}<br>
-                    </p>
+                el('scoreInBag').innerHTML = g.bag.length
+                el('totalItems').innerHTML = total
 
-                    <button onclick="location.reload()">Play again</button>
-                `
+                el('statBag').innerHTML = g.bag.length
+                el('statVoid').innerHTML = g.void.length
+                el('statTable').innerHTML = g.table.length
+                el('statTurns').innerHTML = g.turnCounter
 
                 // later
 

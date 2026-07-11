@@ -115,12 +115,6 @@
 
         z-index: 10;
     }
-        #turnBtn{
-            width: 120px;
-            flex-direction: column; 
-            gap: 4px;
-        }
-
 
 /* BOARD & SCREENS */
     .wrapper{
@@ -184,6 +178,10 @@
             position: absolute;
             top: 12px;
             right: 12px;
+
+            img {
+                width: 56px;
+            }
         }
         .contentArea{
             max-height: 100%;
@@ -226,6 +224,70 @@
         h1{
             text-align: center;
         }
+
+        p{
+            color: black;
+        }
+        .targets{
+            position: absolute; 
+            left: 368px; 
+            top:369px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+
+            p{
+                color: white;
+                font-family: 'JetBrains Mono';
+            }
+        }
+        #againBtn{
+            position: absolute;
+            right: 120px;
+            bottom: 120px;
+        }
+        #runType{
+            position: absolute;
+            left: 188px;
+            top: 168px;   
+
+            font-family: 'Grenze';
+            font-size: 58px;
+            font-weight: 600;
+            font-style: italic;
+            text-align: center;
+            width: 200px;
+        }
+        .score{
+            font-family: 'Grenze';
+            font-size: 52px;
+
+            position: absolute; 
+            left: 192px; 
+            top:281px;
+
+            display: flex;
+            justify-content: center;
+
+            width: 200px;
+            
+            p{
+                width: 80px;
+                text-align: center;
+            }
+        }
+        .stats{
+            position: absolute; 
+            left: 768px; 
+            top:81px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            p {
+                text-align: right;
+            }
+        }
     }
     .leftSection, .rightSection{
         padding: 12px;
@@ -242,6 +304,13 @@
             height: 132px;
 
             justify-content: flex-start;
+
+            flex-direction: column; 
+            gap: 4px;
+
+            img {
+                width: 96px;
+            }
         }
         .fade{animation: fade 4s linear}
         @keyframes fade {
@@ -267,7 +336,8 @@
             left: 12px;
             top: 200px;
 
-            background-image: url(../img/ui/pile.svg);
+            background-image: url(../img/ui/pile.png);
+            background-size: contain;
 
             padding-top: 6px;
         }
@@ -281,10 +351,12 @@
             left: 0px;
         }
         .audioOn{
-            background-image: url(../img/ui/audio-on.svg);
+            background-image: url(../img/ui/audio-on.png);
+            background-size: 32px 32px;
         }
         .audioOff{
-            background-image: url(../img/ui/audio-off.svg);
+            background-image: url(../img/ui/audio-off.png);
+            background-size: 32px 32px;
         }
         #voidBtn, #bagBtn{
             height: 74px;
@@ -299,15 +371,18 @@
             right: 12px
         }
         #voidBtn{
-            background-image: url(../img/ui/void.svg);
+            background-image: url(../img/ui/void.png);
+            background-size: contain;
             bottom: 160px;
             right: 12px
         }
         #bagBtn{
-            background-image: url(../img/ui/bag.svg);
+            background-image: url(../img/ui/bag.png);
+            background-size: contain;
         }
         #howTo{
-            background-image: url(..//img/ui/info.svg);
+            background-image: url(..//img/ui/info.png);
+            background-size: contain;
             height: 65px;
             width: 48px;
             position: absolute;
