@@ -30,14 +30,65 @@ class Die {
         // this.setPosition()
 
         //Click listener
-        die.addEventListener("click", () => {
-            if(g.mode === "dice"){
-                // console.log(`Die: Selected`, event.target);
+        die.addEventListener("click", function (event) {
+            // Selection mode
+            if (g.mode === "dice") {
+                g.activeItem.fx(["target", event.target]);
+                return;
+            }
 
-                //Send selected die to item fx while in selection mode
-                g.activeItem.fx(["target", event.target])
-            }else {
-                // console.log(`Die: Nothing`, event.target);
+            // Pick mode
+            if (g.diePicked === false) {
+                // console.log(`Die: Picked`, event.target);
+                g.diePicked = true
+
+                g.pickedDie = this;           
+                const dieEl = event.target; // the DOM node to drag            
+
+                // Move the die with the cursor
+                const onMove = e => {
+                    // Position the element so that the cursor is at its centre.
+                    // (You can tweak the offset if you want the cursor to stay on
+                    // the top‑left corner, etc.)
+                    const x = e.clientX - dieEl.offsetWidth / 2;
+                    const y = e.clientY - dieEl.offsetHeight / 2;
+                    dieEl.style.position = "fixed";
+                    dieEl.style.left = x + "px";
+                    dieEl.style.top = y + "px";
+                    dieEl.style.pointerEvents = "none"; // so that mouse events pass through
+                };
+
+                document.addEventListener("mousemove", onMove);
+
+                // Drop handling
+                const onDrop = e => {
+                    // console.log("Die dropped on", e.target);
+
+                    // Call your pay routine *only* if the drop target is a card
+                    if (e.target.classList.contains("card")) {
+                        g.pay({
+                            activeDie: dieEl,
+                            targetCard: e.target
+                        });
+                    }
+
+                    // Clean‑up: remove listeners and reset state
+                    document.removeEventListener("mousemove", onMove);
+                    document.removeEventListener("mouseup", onDrop);
+
+                    dieEl.style.position = "";     // restore original styles
+                    dieEl.style.left = "";
+                    dieEl.style.top = "";
+                    dieEl.style.pointerEvents = "";
+
+                    g.diePicked = false
+                };
+
+                // *one‑shot* mouseup that removes itself
+                document.addEventListener("mouseup", onDrop, { once: true });
+
+                // Stop the current click from propagating further
+                event.stopImmediatePropagation();
             }
         })        
 

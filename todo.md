@@ -7,11 +7,7 @@ NO NEW FEATURES UNTIL RELEASE
 Design issues
 
 Bugs
-- Nomiopen => moves items to selection div, nomi close without effect, items stay in selection div.
-- You can open 2 modal at once.
-- Not clear when crown activates, too random, rethink effect?
-- Got an extra turn while pile was at 0.
-- hammer failed activation, - cata failed to activate.
+- CLick to move pattern : if die cost does not match and it 
 - If 2 frogs, pliers + crown combo does not work.
 - Gemdice + frog is not working.
 
@@ -23,3 +19,23 @@ Concepts
 - Add game method to rearrange the dice.
 - Passive: If die roll value exceeds 6, get excess as a separate die.
 - If too many bricks force active items.
+
+
+
+//For drag and drop
+        // if(ev.target.classList.contains('card')){
+        //     // ev.target.parentNode.insertBefore(document.getElementById(data), ev.target);
+        // }
+        // // Duplicates per container in card
+        // else if (ev.target.parentNode.parentNode.classList.contains('card')){
+        //     overlappingCard = ev.target.parentNode.parentNode
+        //     targetContainer = ev.target.parentNode.parentNode.parentNode
+        // }
+        // // If elem in card
+        // else if (ev.target.parentNode.classList.contains('card')){
+        //     overlappingCard = ev.target.parentNode
+        //     targetContainer = ev.target.parentNode.parentNode
+        // }
+        // else{
+        //     targetContainer = ev.target
+        // }

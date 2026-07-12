@@ -23,65 +23,26 @@
     function drop(ev) {
         ev.preventDefault();
         
-
-        //Record target elem
-        //Prevents card to be added inside of a card.
-        //If target elem is card, change target to cards container
-        if(ev.target.classList.contains('card')){
-            overlappingCard = ev.target
-            targetContainer = ev.target.parentNode
-            // ev.target.parentNode.insertBefore(document.getElementById(data), ev.target);
-        }
-        // Duplicates per container in card
-        else if (ev.target.parentNode.parentNode.classList.contains('card')){
-            overlappingCard = ev.target.parentNode.parentNode
-            targetContainer = ev.target.parentNode.parentNode.parentNode
-        }
-        // If elem in card
-        else if (ev.target.parentNode.classList.contains('card')){
-            overlappingCard = ev.target.parentNode
-            targetContainer = ev.target.parentNode.parentNode
-        }
-        else{
-            targetContainer = ev.target
-        }
+        //Record target elem and container
+        overlappingCard = ev.target.closest(".card")
+        targetContainer = ev.target.closest(".card-container")
         
-
-        //Add card to container
-        targetContainer.appendChild(draggedElement);
-
+        //Append dragged html elem
+        // targetContainer.appendChild(draggedElement);
 
         //Do stuff on card placement
-        //Update card location
+            let targetCard = ev.target.closest(".card")                
 
-        //Target element id
-        let targetCard = ev.target.closest(".card")                
+            //Compare costs
+            //Gets data from drag(), (transfers id)
+            var data = ev.dataTransfer.getData("text/plain");
+            let activeDie = el(data)
+            g.pay({
+                "activeDie": activeDie,
+                "targetCard": targetCard,
+            })
 
-        //EVALUATE costs
-        //Gets data from drag(), (transfers id)
-        var data = ev.dataTransfer.getData("text/plain");
-        let activeDie = el(data)
-
-        
-        //PAY: Compare dice cost
-        if(
-               activeDie.dataset.rollvalue > 6
-            && activeDie.dataset.rollvalue >= targetCard.dataset.cost 
-        ){
-            findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
-            activeDie.remove()
-            new Die({value: activeDie.dataset.rollvalue - targetCard.dataset.cost, ignoreRounding: true}) //Return excess for gemdie
-            playSFX('pay')
-            }
-        else if(activeDie.dataset.rollvalue === targetCard.dataset.cost){
-            findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
-            activeDie.remove()
-            playSFX('pay')
-        }else{
-            el("dice").appendChild(draggedElement)
-            playSFX('cantPay', "single")
-        }
-
+            g.preventItemEffectTrigger = false //clear on click flag from other move pattern
     }
 
     //Make base elem invisible during drag and drop
@@ -119,6 +80,7 @@
 
             this.turnCounter = 0
             this.targets  = []
+            this.diePicked = false
 
             this.itemsPerTurn = confirm.itemsPerTurn
         }
@@ -215,7 +177,41 @@
                 g.finalTurn = true
             }
         }
+        //Compares dice value with item cost and resolves payment
+        pay(args){
+            // console.log(args);
+            
+            let activeDie = args.activeDie
+            let targetCard = args.targetCard
 
+            if(
+                   activeDie.dataset.rollvalue > 6
+                && activeDie.dataset.rollvalue >= targetCard.dataset.cost 
+            ){
+                findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
+                activeDie.remove()
+                new Die({value: activeDie.dataset.rollvalue - targetCard.dataset.cost, ignoreRounding: true}) //Return excess for gemdie
+                playSFX('pay')
+            }
+            else if(activeDie.dataset.rollvalue === targetCard.dataset.cost){
+                findByProperty(g.table, "itemId", targetCard.id).moveCard("bag") //Move card to bag
+                activeDie.remove()
+                playSFX('pay')
+
+            //Can't pay
+            }else{
+                if(g.diePicked = false){
+                    el("dice").appendChild(draggedElement)
+                }
+                //Resolves an issue when picking and dropping a die would trigger onClick item effects
+                else{
+                    g.preventItemEffectTrigger = true
+                }
+                playSFX('cantPay', "single")
+            }
+        }
+
+        //Item rng manager
         dropManager(){
             let bricks = findByProperty(this.table, "brick", "y", 'includes').length
            
@@ -229,6 +225,7 @@
             }
         }
 
+        // Turn start item effects
         triggerTurnStartFx(){
              q.add(() =>
                 g.table.forEach(item => {
@@ -238,6 +235,7 @@
                 })
             )   
         }
+
 
         //Clear dice
         clearDice(){
@@ -261,6 +259,7 @@
                 new Die(args)
             }
         }
+
 
         gameOver(){
             // if(this.pile.length < 1){
@@ -375,7 +374,7 @@
             else if(args.mode !== undefined && args.mode === "exit"){
                 el('selectionShade').classList.add('hide') //toggle shade
 
-                console.log(g.mode);
+                // console.log(g.mode);
                 
 
                 if(g.mode === "dice"){
@@ -497,7 +496,7 @@
     const audio = new SoundManager()
     // sfx works without this, but bg doesn't
     function unlockAudio() {
-        sound.playMusic(`bg-audio`);
+        // sound.playMusic(`bg-audio`);
         window.removeEventListener("pointerdown", unlockAudio);
     }
     window.addEventListener("pointerdown", unlockAudio, { once: true });

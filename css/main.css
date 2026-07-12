@@ -915,7 +915,7 @@
 
         /* position: absolute; */
 
-        z-index: 3;
+        z-index: 4;
     }
         .die1{background-image: url("../img/die/id=1.png");}
         .die2{background-image: url("../img/die/id=2.png");}

@@ -63,10 +63,17 @@ class Card {
         let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
         
 
-        //Adds on click event for html elem
+        //Adds on click listener
         card.addEventListener("click", () => { //click => onclick event, not listener id
+
             //Send selected item to item fx while in selection mode
-            if(g.mode === 'table' || g.mode === 'void' || g.mode === 'bag'){
+            console.log('mode : ',g.mode);
+            console.log('diePicked : ',g.diePicked);
+            
+            if(g.preventItemEffectTrigger){
+                g.preventItemEffectTrigger = false
+            }
+            else if(g.mode === 'table' || g.mode === 'void' || g.mode === 'bag'){
                 g.activeItem.fx(["target", event.target])
             }
             //Trigger item effect
@@ -139,7 +146,7 @@ class Card {
             let imgString = `<img class="itemImg" src="./img/items/id=${img}.png">`
 
 
-                //Adds on click event for html elem, click => onclick event not listener id
+            //Adds shake
             if(this.effectType === "onClick" && this.flags.uses > 0){
                 imgString = `<img class="itemImg shake" src="./img/items/id=${img}.png">`
             }
