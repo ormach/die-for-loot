@@ -133,11 +133,57 @@
                     <p id="statTurns">28</p>
                 </div>
 
-                <button id="againBtn" onclick="location.reload()">
+                <button id="againBtn" onclick="toggleModal('progress')">
                     <img src="./img/ui/end-btn.png" style="width: 228px;">
                 </button>
                 
                 <img src="./img/ui/end-premade.jpg" alt="" style="z-index: -1; position: absolute;height: 600px;">
+            </div>
+
+            <!-- Select stage -->
+            <div id="progress" class="modal hide">
+                <div class="lineItems">
+
+                    <div>
+                        <h1>Epics</h1>
+                        <div id="epicsRank"></div>
+                        <p>
+                            +9 items<br>
+                            Relics can be used to manipulate items.
+                        </p>
+                    </div>
+    
+                    <div>
+                        <h1>Relics</h1>
+                        <div id="relicsRank"></div>
+                        <p>
+                            +12 items<br>
+                            Relics can be used to manipulate items.
+                        </p>
+                    </div>
+    
+                    <div>
+                        <h1>Tools</h1>
+                        <div id="toolsRank"></div>
+                        <p>
+                            11 items<br>
+                            Tools can be used to manipulate dice.
+                        </p>
+                    </div>
+                </div>
+                
+                <p style="position: absolute; left: 12px; bottom: 12px;">Get Silver+ to unlock more items.</p>
+
+                <button 
+                    onclick="g.newGame(), toggleModal('progress')"
+                    class="base-btn" 
+                    style="width:120px; position: absolute; bottom: 12px; right: 12px;" 
+                >
+                    Play
+                </button>
+
+                <img src="./img/ui/progress-modal.png" alt="" style="z-index: -1; position: absolute;height: 600px;">
+
             </div>
 
             <!-- Help -->
@@ -156,7 +202,7 @@
             <!-- Selection -->
             <div id="selectionShade" class="hide">
                 <div id="selectionContainer"></div>
-                <button onclick="g.selectionMode({mode:'exit'})">
+                <button class="base-btn" onclick="g.selectionMode({mode:'exit'})">
                     Cancel & go back
                 </button>
             </div>

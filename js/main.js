@@ -87,6 +87,8 @@
 
         //Update html based on game state
         updateUI(){
+
+            //Update game screen values
             el(`voidBtn`).innerHTML = `
                 <p>${g.void.length}</p>
             `
@@ -98,6 +100,17 @@
             el(`pileBtn`).innerHTML = `
                 <p>${g.pile.length}</p>
             `
+
+            //Updates game progress
+            if(localStorage.getItem('toolsRun') ?? ''){
+                el(`toolsRank`).innerHTML = localStorage.getItem('toolsRun');
+            }
+            if(localStorage.getItem('epicsRun') ?? ''){
+                el(`epicsRank`).innerHTML = localStorage.getItem('epicsRun');
+            }
+            if(localStorage.getItem('relicsRun') ?? ''){
+                el(`relicsRank`).innerHTML = localStorage.getItem('relicsRun');
+            }
         }
 
         //Turn
@@ -275,9 +288,11 @@
 
                 if(g.bag.length >= gold){
                     runOutcome = "Gold"
+                    localStorage.setItem(`${g.runType}Run`,'pass')
                 }
                 else if (g.bag.length >= silver){
                     runOutcome = "Silver"
+                    localStorage.setItem(`${g.runType}Run`,'pass')
                 }
                 else if (g.bag.length >= bronze){
                     runOutcome = "Bronze"
@@ -306,9 +321,13 @@
                 document.addEventListener('keydown', newKeyHandler);
 
                 toggleModal("gameOver")
+                g.updateUI()
 
                 return true
             // }            
+        }
+        newGame(){
+            location.reload()
         }
 
         
@@ -413,8 +432,15 @@
     function startGame(){
         g = new Game
         
+        // localStorage.setItem('toolsRun','pass')
+        // let item = localStorage.getItem('name')
+        // console.log(item);
+
+        if(config.clearLs) {localStorage.clear()}
+
         //Generate all items
         g.initialGen = true
+
         //Setup config board
         if(config.gameState !== undefined){
 
@@ -439,6 +465,16 @@
         else {
             cardsRef.forEach(card =>{
     
+                // if(!config.itemFilter.includes(card.type)) return
+                if(localStorage.getItem('toolsRun') !== "pass"){
+                    g.runType = 'tools'
+                    if(!['tool'].includes(card.type)) return
+                }
+                else if(localStorage.getItem('relicsRun') !== "pass"){
+                    g.runType = 'relics'
+                    if(!['tool','relic'].includes(card.type)) return
+                }
+    
                 if(card.hide !== "y"){
                     g.cardsRef.push(card)
     
@@ -457,6 +493,7 @@
 
         //Misc
         g.updateUI()
+
         // runAnim(el("imgGirl"),`idle`)
         // g.nextTurn()
 
@@ -464,6 +501,7 @@
         document.addEventListener('keydown', keyHandler);
     }
     
+
     //KEYBOARD
     function keyHandler(event) {
         if(g.inputLock) return

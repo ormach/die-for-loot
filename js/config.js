@@ -13,9 +13,11 @@ let config = {
         flags: {},
 
     //Testing
+        // clearLs: true,
+        // itemFilter:['tool', 'relic'],
         // gameState: {
         //     table: ['pliers','necronomicon', 'catapult'],
-        //     void:  ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
+        //     void:  ['acid','glue','acid','acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
         //     bag:   ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
         //     pile:  ['glue','saw','frog'],
         // }
