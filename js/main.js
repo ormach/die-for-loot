@@ -485,6 +485,9 @@
                     g.runType = 'relics'
                     if(!['tool','relic'].includes(card.type)) return
                 }
+                else{
+                    g.runType = 'epics'
+                }
     
                 
                 if(card.hide !== "y"){
