@@ -498,6 +498,11 @@
             display: flex;
             gap: 44px;
             flex-direction: column;
+
+            div {
+                width: 640px;
+                position: relative;
+            }
         }
 
         h1, p {color: black !important;}

@@ -103,13 +103,14 @@
 
             //Updates game progress
             if(localStorage.getItem('toolsRun') ?? ''){
-                el(`toolsRank`).innerHTML = localStorage.getItem('toolsRun');
+                el(`toolsLabel`).setAttribute('src', `./img/progress/id=${localStorage.getItem('toolsRun')}.png`)
+
             }
             if(localStorage.getItem('epicsRun') ?? ''){
-                el(`epicsRank`).innerHTML = localStorage.getItem('epicsRun');
+                el(`epicsLabel`).setAttribute('src', `./img/progress/id=${localStorage.getItem('epicsRun')}.png`)
             }
             if(localStorage.getItem('relicsRun') ?? ''){
-                el(`relicsRank`).innerHTML = localStorage.getItem('relicsRun');
+                el(`relicsLabel`).setAttribute('src', `./img/progress/id=${localStorage.getItem('relicsRun')}.png`)
             }
         }
 
@@ -288,17 +289,19 @@
 
                 if(g.bag.length >= gold){
                     runOutcome = "Gold"
-                    localStorage.setItem(`${g.runType}Run`,'pass')
+                    localStorage.setItem(`${g.runType}Run`,'gold')
                 }
                 else if (g.bag.length >= silver){
                     runOutcome = "Silver"
-                    localStorage.setItem(`${g.runType}Run`,'pass')
+                    localStorage.setItem(`${g.runType}Run`,'silver')
                 }
                 else if (g.bag.length >= bronze){
                     runOutcome = "Bronze"
+                    localStorage.setItem(`${g.runType}Run`,'bronze')
                 }
                 else{
                     runOutcome = "Failed"
+                    localStorage.setItem(`${g.runType}Run`,'none')
                 }
 
                 el('runType').innerHTML = runOutcome
@@ -466,15 +469,24 @@
             cardsRef.forEach(card =>{
     
                 // if(!config.itemFilter.includes(card.type)) return
-                if(localStorage.getItem('toolsRun') !== "pass"){
+
+                
+                if(
+                        localStorage.getItem('toolsRun') !== "gold"
+                    &&  localStorage.getItem('toolsRun') !== "silver"
+                ){
                     g.runType = 'tools'
                     if(!['tool'].includes(card.type)) return
                 }
-                else if(localStorage.getItem('relicsRun') !== "pass"){
+                else if(
+                        localStorage.getItem('relicsRun') !== "gold" 
+                    &&  localStorage.getItem('relicsRun') !== "silver" 
+                ){
                     g.runType = 'relics'
                     if(!['tool','relic'].includes(card.type)) return
                 }
     
+                
                 if(card.hide !== "y"){
                     g.cardsRef.push(card)
     
