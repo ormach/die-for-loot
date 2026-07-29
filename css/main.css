@@ -277,6 +277,7 @@
             }
         }
         .stats{
+            font-family: '';
             position: absolute; 
             left: 768px; 
             top:81px;
@@ -286,6 +287,7 @@
 
             p {
                 text-align: right;
+                font-family: 'JetBrains Mono';
             }
         }
     }
@@ -301,7 +303,7 @@
             left: 377px;
 
             width: 96px;
-            height: 132px;
+            height: 112px;
 
             justify-content: flex-start;
 
@@ -496,7 +498,7 @@
         .lineItems{
             margin:140px 0 24px;
             display: flex;
-            gap: 14px;
+            gap: 15px;
             flex-direction: column;
 
             div {
@@ -944,8 +946,8 @@
         width: 60px;
 
         background-size: 60px 60px;
-        box-shadow: 4px 4px 0px var(--b20);
-        border-radius: 4px;
+        /* box-shadow: 4px 4px 0px var(--b20); */
+        /* border-radius: 4px; */
 
         cursor: grab;
 

@@ -157,6 +157,9 @@
                 runAnim(el('turnBtn'), 'fade')
                 el('turnBtn').innerHTML = `<img src="./img/ui/turn.png" alt="">`
             }
+
+            //AUDIO
+            playSFX('turn')
         }
 
         //Moves item from pile to table, if no space voids it.
@@ -221,6 +224,7 @@
                 else{
                     g.preventItemEffectTrigger = true
                 }
+
                 playSFX('cantPay', "single")
             }
         }

@@ -310,7 +310,7 @@ class Card {
                 mover.classList.add('hide')
                 
                 //AUDIO
-                sound.play(`drop-${rngNoRepeat(4)}`);
+                playSFX(`drop`);
             }
         transform(args){
             if(args.mode === "all"){

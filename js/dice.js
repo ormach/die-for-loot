@@ -45,6 +45,8 @@ class Die {
                 g.pickedDie = this;           
                 const dieEl = event.target; // the DOM node to drag            
 
+                playSFX('die')
+
                 // Move the die with the cursor
                 const onMove = e => {
                     // Position the element so that the cursor is at its centre.
