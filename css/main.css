@@ -335,8 +335,8 @@
 
 
             position: absolute;
-            left: 12px;
-            top: 200px;
+            left: 220px;
+            top: 12px;
 
             background-image: url(../img/ui/pile.png);
             background-size: contain;
@@ -495,16 +495,32 @@
         align-items: center;
         justify-content: flex-start;
         
-        .lineItems{
+        .lineItemContainer{
             margin:140px 0 24px;
+
+            width: 520px;
+            height: 272px;
+
             display: flex;
             gap: 15px;
             flex-direction: column;
 
-            div {
+            h1{
+                color: white;
+            }
+            .lineItem {
+                display: flex;
+                flex-direction: column;
+                gap: 0px;
+
                 width: 520px;
-                height: 120;
-                position: relative;
+                flex: 1;
+                
+                position: relative !important;
+
+                p{
+                    line-height: 16px;
+                }
             }
         }
 

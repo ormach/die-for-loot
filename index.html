@@ -40,7 +40,6 @@
     </head>
 
     <body>
-
         <div class="wrapper">
 
             <!-- Pile Dice -->
@@ -133,14 +132,14 @@
 
             <!-- Select stage -->
             <div id="progress" class="modal hide">
-                <div class="lineItems">
+                <div class="lineItemContainer">
 
-                    <div>
+                    <div class="lineItem">
                         <h1>Epics</h1>
                         <div id="epicsRank"></div>
                         <p>
-                            Epics apply various passive effects.<br>
-                            +9 items
+                            · Epics apply passive effects.<br>
+                            · Additional 9 items.
                         </p>
 
                         <img 
@@ -150,45 +149,47 @@
                         >
                     </div>
     
-                    <div>
+                    <div class="lineItem">
                         <h1>Relics</h1>
                         <div id="relicsRank"></div>
                         <p>
-                            Relics can be used to manipulate items.<br>
-                            +12 items
+                            · Relics manipulate items.<br>
+                            · Additional 12 items.
                         </p>
 
                         <img 
                             id="relicsLabel"
                             src="./img/progress/id=none.png" 
-                            style="height: 32px; position: absolute; right: 12px; bottom: -8px;"
+                            style="height: 32px; position: absolute; right: 12px; bottom: -9px;"
                         >
                     </div>
     
-                    <div>
+                    <div class="lineItem">
                         <h1>Tools</h1>
                         <div id="toolsRank"></div>
                         <p>
-                            Tools manipulate dice.<br>
-                            11 items
+                            · Tools manipulate dice.<br>
+                            · Initial 11 items.
                         </p>
 
                         <img 
                             id="toolsLabel"
                             src="./img/progress/id=none.png" 
-                            style="height: 32px; position: absolute; right: 12px; bottom: -4px;"
+                            style="height: 32px; position: absolute; right: 12px; bottom: -2px;"
                         >
                     </div>
                 </div>
                 
-                <p style="position: absolute; left: 12px; bottom: 12px;">Get Silver+ to unlock more items.</p>
+                <p style="position: absolute; left: 16px; bottom: 12px; line-height: 100%;">
+                    Get Silver or Gold<br>to unlock more items.
+                </p>
 
                 <button 
                     onclick="g.newGame(), toggleModal('progress')"
-                    class="base-btn" 
-                    style="width:120px; position: absolute; bottom: 12px; right: 12px;" 
+                    class="states" 
+                    style="position: absolute; bottom: 12px; right: 12px;" 
                 >
-                    Play
+                    <img src="./img/ui/play.png" style="height: 56px;">
                 </button>
 
                 <img src="./img/progress/progress-bg.jpg" alt="" style="z-index: -1; position: absolute;height: 600px;">
@@ -234,9 +235,6 @@
             <!-- ALERT -->
             <div id="alert-container"></div>
         </div>
-
-        
-
     </body>
 
 </html>
