@@ -51,7 +51,7 @@
         color: var(--font-color);
     }
     body{
-        background-color: rgb(46, 66, 92);
+        background-color: rgb(0, 0, 0);
 
         font-family: sans-serif;
         line-height: 150%;
