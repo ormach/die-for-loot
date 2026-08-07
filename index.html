@@ -7,17 +7,12 @@
         <title>Die For Loot</title>
 
         <!-- Share link preview -->
-        <meta property="og:title" content="Library Of Morr" />
+        <meta property="og:title" content="Die For Loot" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.gatesofmorr.com" />
-        <meta property="og:image:url" content="https://www.gatesofmorr.com/img/share-image.png" />
-        <meta property="og:image:type" content="image/png" >
-        <meta property="og:image:width" content="1200" >
-        <meta property="og:image:height" content="1200" >
-
+  
         <!-- Descriptions -->
-        <meta property="og:description" content="A free web rougelike with unique dice based combat system, many interesting items and map events." />
-        <meta name="description" content="A free web rougelike with unique dice based combat system, many interesting items and map events.">
+        <meta property="og:description" content="Dice puzzle game." />
+        <meta name="description" content="Dice puzzle game.">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -212,15 +207,19 @@
             <!-- Selection -->
             <div id="selectionShade" class="hide">
                 <div id="selectionContainer"></div>
-                <button class="base-btn" onclick="g.selectionMode({mode:'exit'})">
-                    Cancel & go back
+                
+                <button class="states" onclick="g.selectionMode({mode:'exit'})">
+                    <img src="./img/ui/cancel-120x56.png" style="height: 56px;">
                 </button>
             </div>
 
 
             <!-- Scene images -->
             <img id="mover" class="hide">
-            <img id="imgBg"    style="pointer-events: none; top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
+
+
+            <img id="imgGob"   style="pointer-events: none; bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/full-bg.jpg" alt="">
+            <!-- <img id="imgBg"    style="pointer-events: none; top: 0px; left: 0px; width: 960px;" class="decoration" src="./img/ui-placeholders/bg.png" alt="">
             <img id="imgPile"  style="pointer-events: none; top: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/pile.png" alt="">
             
             <img id=""         style="pointer-events: none; bottom: 0px; right: -0px;" class="decoration" src="./img/ui-placeholders/girl 2.png" alt="">
@@ -229,7 +228,8 @@
             <img id=""         style="pointer-events: none; bottom: 0px; right: -8px; z-index: 0;" class="decoration" src="./img/ui-placeholders/bell.png" alt="">
         
             <img id="imgBag"   style="pointer-events: none; bottom: 0px; right: 0px;" class="decoration" src="./img/ui-placeholders/bag.png" alt="">
-            <img id="imgGob"   style="pointer-events: none; bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/goblin.png" alt="">
+            <img id="imgGob"   style="pointer-events: none; bottom: 0px; left: 0px;" class="decoration" src="./img/ui-placeholders/goblin.png" alt=""> -->
+
 
 
             <!-- ALERT -->

@@ -16,9 +16,9 @@ let config = {
         // clearLs: true,
         // itemFilter:['tool', 'relic'],
         // gameState: {
-        //     table: ['counterspell','necronomicon', 'catapult'],
+        //     table: ['delay','pliers', 'mirror'],
         //     void:  ['acid','glue','acid','acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
-        //     bag:   ['acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
-        //     pile:  ['glue','saw','frog'],
+        //     bag:   ['acid','glue','acid','glue', 'pliers', 'acid','glue','acid','glue', 'pliers','necronomicon', 'catapult', 'acid','glue','pliers','necronomicon', 'catapult'],
+        //     pile:  ['pig','hammer','camera'],
         // }
 }

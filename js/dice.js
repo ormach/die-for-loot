@@ -30,20 +30,21 @@ class Die {
         // this.setPosition()
 
         //Click listener
-        die.addEventListener("click", function (event) {
+        die.addEventListener("mouseup", function (event) {
             // Selection mode
             if (g.mode === "dice") {
                 g.activeItem.fx(["target", event.target]);
                 return;
             }
 
-            // Pick mode
+            // Dice movement : Pick mode
             if (g.diePicked === false) {
-                // console.log(`Die: Picked`, event.target);
+                // console.log(`Die: Picked`, g.diePicked);
                 g.diePicked = true
 
                 g.pickedDie = this;           
-                const dieEl = event.target; // the DOM node to drag            
+                const dieEl = event.target; // the DOM node to drag       
+                dieEl.classList.add('picked') //adds z index and scale    
 
                 playSFX('die')
 
@@ -64,7 +65,7 @@ class Die {
 
                 // Drop handling
                 const onDrop = e => {
-                    // console.log("Die dropped on", e.target);
+                    // console.log("Die dropped on");
 
                     // Call your pay routine *only* if the drop target is a card
                     if (e.target.classList.contains("card")) {
@@ -82,6 +83,7 @@ class Die {
                     dieEl.style.left = "";
                     dieEl.style.top = "";
                     dieEl.style.pointerEvents = "";
+                    dieEl.classList.remove('picked') //adds z index and scale
 
                     g.diePicked = false
                 };

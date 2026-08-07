@@ -34,7 +34,7 @@ let itemEffectRef = {
 
     //onOtherMove
     jar(item){
-        console.log(item.location);
+        // console.log(item.location);
         
         if(!this.checkConditions({
             reqLocation: "table", 
@@ -46,7 +46,7 @@ let itemEffectRef = {
         new Alert(`An item was moved to void, a 1-value die was added.`, this.name)
 
     },
-    binder(item){
+    horse(item){
         if(!this.checkConditions({
             reqLocation: "table", 
             target: item,
@@ -84,8 +84,9 @@ let itemEffectRef = {
             arg.setRollValue(val, true, "ignoreRounding")  
             g.pliersTarget = undefined //fixes pliers + crown + frog combo for one frog
         }
+        //For now frog can generate gem dice from all sources.
         else{
-            arg.setRollValue(val, true)  
+            arg.setRollValue(val, true, "ignoreRounding")  
         }
     
     },
@@ -167,13 +168,11 @@ let itemEffectRef = {
                 console.log('bingo');
                 
                 limitCounter--
-                g.table[i].moveCard("bag")
-
-                
+                 q.add(() => g.table[i].moveCard("bag")) //g.add to make item reveal wait for bingo to resolve
             }
         }
 
-        new Alert(`BINGO!!! 3 items were moved to bag.`, this.name)
+        new Alert(`BINGO! 3 items moved to bag.`, this.name)
 
     },
 
@@ -302,6 +301,7 @@ let itemEffectRef = {
         if(arg !== "used" || !this.checkConditions({reqLocation: "table", uses: true})) return
         g.selectionMode({location: "dice", sourceItem: this})
     },
+    //Old
     camera(arg){
         
         //Select 1st die.
@@ -313,18 +313,9 @@ let itemEffectRef = {
             let value = target.value
 
             g.dice.forEach(die => {
-                die.setRollValue(value)
+                die.setRollValue(value, undefined, "ignoreRounding")
             })
 
-            g.selectionMode({mode: 'exit'})
-            this.endEffect({uses: true})
-        }
-
-        //Select 2nd die.
-        if(g.targets.length === 2){
-
-            g.targets[1].setRollValue(g.targets[0].value)
-            
             g.selectionMode({mode: 'exit'})
             this.endEffect({uses: true})
         }

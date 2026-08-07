@@ -67,8 +67,8 @@ class Card {
         card.addEventListener("click", () => { //click => onclick event, not listener id
 
             //Send selected item to item fx while in selection mode
-            console.log('mode : ',g.mode);
-            console.log('diePicked : ',g.diePicked);
+            // console.log('mode : ',g.mode);
+            // console.log('diePicked : ',g.diePicked);
             
             if(g.preventItemEffectTrigger){
                 g.preventItemEffectTrigger = false

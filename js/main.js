@@ -395,7 +395,6 @@
                 })
             }
 
-
             // Exits mode
             else if(args.mode !== undefined && args.mode === "exit"){
                 el('selectionShade').classList.add('hide') //toggle shade
@@ -428,6 +427,8 @@
                 })
                                 
             }
+
+            playSFX('cantPay', "single")
         }
     }
 
